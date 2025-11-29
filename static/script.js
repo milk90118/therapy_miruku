@@ -44,7 +44,7 @@ if (modeEl) {
 }
 
 // =========================
-// 題目：送出訊息
+// 送出訊息
 // =========================
 function handleSend() {
   if (!inputEl) return;
@@ -201,30 +201,45 @@ function updateModeUI(mode) {
 })();
 
 // =========================
-// 櫻花 & 星星自動生成
+// 櫻花 & 星星自動生成 - 增加數量與層次
 // =========================
 document.addEventListener("DOMContentLoaded", () => {
   const sakuraContainer = document.querySelector(".sakura-container");
   const starContainer = document.querySelector(".star-container");
 
+  // 櫻花：增加到 35 片，營造更豐富的春日氛圍
   if (sakuraContainer) {
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 35; i++) {
       const petal = document.createElement("div");
       petal.className = "sakura";
+      
+      // 隨機分佈於螢幕寬度
       petal.style.left = Math.random() * 100 + "%";
-      petal.style.animationDelay = Math.random() * 8 + "s";
-      petal.style.animationDuration = 10 + Math.random() * 6 + "s";
+      
+      // 隨機延遲，避免同時出現
+      petal.style.animationDelay = Math.random() * 12 + "s";
+      
+      // 隨機持續時間，創造深度感
+      petal.style.animationDuration = 12 + Math.random() * 8 + "s";
+      
       sakuraContainer.appendChild(petal);
     }
   }
 
+  // 星星：增加到 40 顆，營造滿天星空
   if (starContainer) {
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 40; i++) {
       const star = document.createElement("div");
       star.className = "star";
+      
+      // 隨機分佈於整個螢幕
       star.style.left = Math.random() * 100 + "%";
       star.style.top = Math.random() * 100 + "%";
-      star.style.animationDelay = Math.random() * 3 + "s";
+      
+      // 隨機延遲與持續時間
+      star.style.animationDelay = Math.random() * 4 + "s";
+      star.style.animationDuration = 3 + Math.random() * 3 + "s";
+      
       starContainer.appendChild(star);
     }
   }
