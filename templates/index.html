@@ -950,14 +950,14 @@
     這是一個還在慢慢長大的測試版本，目前使用 OpenAI 的 ChatGPT 4.1 模型陪你一起整理心情。<br>
     回覆有時候可能需要一點點時間，謝謝你願意耐心等候。<br>
     目前所有對話所產生的費用都由開發者自行負擔，若未來超過可承擔的用量，服務可能會暫時休息一下再回來。<br>
-    請把這裡當成一個安靜的小角落，擁抱一切的不完美<br>
-    </div>
+    請把這裡當成一個安靜的小角落，擁抱一切的不完美。<br>
+  </div>
 
-    <div class="disclaimer">
-        心理治療不是把人修得更完美，而是陪你成為更自在的真實自己。<br>
-        而真正能讓人鬆一口氣的，往往不是建議，而是終於有人願意好好聽你說話。<br>
-        本工具僅供自我整理與學習使用，不取代專業精神科醫師或臨床心理師之診斷與治療。<br>
-        若有自傷或他傷念頭，請立即尋求急診或當地緊急醫療協助。
+  <div class="disclaimer">
+    心理治療不是把人修得更完美，而是陪你成為更自在的真實自己。<br>
+    而真正能讓人鬆一口氣的，往往不是建議，而是終於有人願意好好聽你說話。<br>
+    本工具僅供自我整理與學習使用，不取代專業精神科醫師或臨床心理師之診斷與治療。<br>
+    若有自傷或他傷念頭，請立即尋求急診或當地緊急醫療協助。
   </div>
 
   <main class="layout">
@@ -973,15 +973,17 @@
 
       <label for="mode">模式 Mode</label>
       <select id="mode">
-        <option value="support">情緒支持 Support</option>
-        <option value="cbt">CBT 思考紀錄 CBT</option>
-        <option value="education">心理教育 Education</option>
+        <option value="support">🌿 溫柔陪伴 Support</option>
+        <option value="cbt">🧩 思考紀錄 CBT</option>
+        <option value="act">🎯 接納練習 ACT</option>
+        <option value="grounding">🌊 身體覺察 Grounding</option>
+        <option value="education">📚 心理教育 Education</option>
       </select>
 
       <label for="input">訊息 Message</label>
-      <textarea id="input" placeholder="說說此刻的心情 | 現在在哪裡 | 上一秒浮現的想法 | 所有的困惑"></textarea>
+      <textarea id="input" placeholder="寫下一點點此刻的狀態 | 現在在哪裡 | 上一秒浮現的想法 | 所有的困惑"></textarea>
 
-      <p class="hint">( ˶'ᵕ'🫶)💕不需要一次寫得很多，比剛剛多一點點就好。</p>
+      <p class="hint" id="mode-hint">( ˶'ᵕ'🫶)💕 不需要一次寫得很多，只要比剛剛多一點點就好。</p>
 
       <div class="actions">
         <button id="send-btn">送出</button>
