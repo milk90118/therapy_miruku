@@ -262,6 +262,45 @@
       background: var(--peach-medium);
     }
 
+    /* 使用說明區塊 */
+    .guide {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      margin-bottom: 1.5rem;
+      padding: 1.3rem 1.4rem;
+      border-left: 4px solid var(--peach-primary);
+      background: linear-gradient(135deg, var(--peach-light) 0%, transparent 100%);
+      border-radius: 0 16px 16px 0;
+      line-height: 1.75;
+      position: relative;
+      z-index: 1;
+      animation: slideInLeft 0.6s ease-out 0.8s both;
+      transition: all 0.4s ease;
+    }
+
+    .guide-title {
+      font-family: "Shippori Mincho", "Noto Serif JP", serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--peach-primary);
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.08em;
+    }
+
+    .guide-list {
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+
+    .guide-list li {
+      margin-bottom: 0.5rem;
+      padding-left: 0.3rem;
+    }
+
+    .guide-list li::marker {
+      color: var(--peach-primary);
+    }
+
     .disclaimer {
       font-size: 0.8rem;
       color: var(--text-soft);
@@ -721,6 +760,16 @@
     </div>
   </header>
 
+  <!-- 使用說明區塊 -->
+  <div class="guide">
+    <div class="guide-title">✦ 使用說明</div>
+    <ul class="guide-list">
+      <li><strong>情緒支持</strong>：當你需要被傾聽、需要陪伴時，選擇這個模式</li>
+      <li><strong>CBT 思考紀錄</strong>：記錄並整理自動化思考、情緒與行為模式</li>
+      <li><strong>心理教育</strong>：了解心理健康相關知識與應對策略</li>
+    </ul>
+  </div>
+
   <div class="disclaimer">
     心理治療不是把人修得更完美，而是陪你成為更自在的真實自己。<br>
     而真正能讓人鬆一口氣的，往往不是建議，而是終於有人願意好好聽你說話。<br>
@@ -749,7 +798,7 @@
       <label for="input">訊息 Message</label>
       <textarea id="input" placeholder="寫下一點點此刻的狀態 | 現在在哪裡 | 上一秒浮現的想法 | 所有的困惑"></textarea>
 
-      <p class="hint">小提醒：不需要一次寫得很多，只要比剛剛多一點點就好。</p>
+      <p class="hint">( ˶'ᵕ'🫶)💕不需要一次寫得很多，只要比剛剛多一點點就好。</p>
 
       <div class="actions">
         <button id="send-btn">送出</button>
@@ -759,7 +808,6 @@
   </main>
 
   <footer>
-    v0.1 · made for gentle self-reflection
     <span class="footer-author">Produced by milk90118 · Wen-Yu Su</span>
   </footer>
 
