@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>心理治療小助手</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- 文青雜誌風字體：明朝 + 無襯線 -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- Reset -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css">
+
+  <style>
+    :root {
+      --bg-main: #f6f3ee;          /* 米色底 */
+      --paper: #fcfaf6;            /* 紙張色 */
+      --paper-accent: #f0ebe3;     /* 卡片微底色 */
+      --ink-main: #2f2a28;         /* 墨色文字 */
+      --ink-soft: #8a8177;         /* 柔和說明字 */
+      --accent-green: #7c8f80;     /* 文青綠 */
+      --accent-clay: #c8907a;      /* 淡磚紅 */
+      --border-soft: #ddd2c5;
+      --bubble-user: #e7f0ea;      /* 使用者泡泡：帶綠 */
+      --bubble-bot: #fff1e4;       /* 助理泡泡：帶橘 */
+      --card-radius: 20px;
+      --shadow-soft: 0 10px 26px rgba(0,0,0,0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 2.4rem 1.6rem 4rem;
+      background:
+        linear-gradient(180deg, #fdfaf6 0, #f6f3ee 40%, #f1ece4 100%);
+      color: var(--ink-main);
+      font-family: "Noto Sans JP", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.8;
+      letter-spacing: 0.03em;
+    }
+
+    header {
+      margin-bottom: 1.8rem;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      padding-bottom: 1.2rem;
+    }
+
+    h1 {
+      font-family: "Noto Serif JP", serif;
+      font-size: 2.1rem;
+      letter-spacing: 0.12em;
+      font-weight: 500;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      margin-top: 0.5rem;
+      font-size: 0.96rem;
+      color: var(--ink-soft);
+    }
+
+    .badge-row {
+      margin-top: 0.9rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      font-size: 0.76rem;
+    }
+
+    .badge {
+      padding: 0.16rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: var(--paper-accent);
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 400;
+    }
+
+    .disclaimer {
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+      margin-bottom: 1.4rem;
+      padding-left: 0.8rem;
+      border-left: 3px solid var(--border-soft);
+      line-height: 1.7;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 1.4rem;
+    }
+
+    @media (max-width: 768px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      body {
+        padding: 1.8rem 1.1rem 3rem;
+      }
+      h1 {
+        font-size: 1.7rem;
+      }
+    }
+
+    .card {
+      background: var(--paper);
+      border-radius: var(--card-radius);
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-soft);
+      padding: 1.2rem 1.1rem 1.1rem;
+    }
+
+    #chat-card {
+      background: linear-gradient(145deg, #fcfaf6, #f5efe5);
+    }
+
+    #chat-box {
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 0.4rem;
+    }
+
+    #chat-box::-webkit-scrollbar {
+      width: 6px;
+    }
+    #chat-box::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.15);
+      border-radius: 999px;
+    }
+
+    .msg {
+      margin-bottom: 0.9rem;
+      display: flex;
+    }
+
+    .msg-user {
+      justify-content: flex-end;
+    }
+
+    .bubble {
+      max-width: 80%;
+      padding: 0.7rem 1rem;
+      border-radius: 14px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      font-size: 0.95rem;
+      border: 1px solid rgba(0,0,0,0.04);
+      background-clip: padding-box;
+    }
+
+    .bubble-user {
+      background: var(--bubble-user);
+      border-bottom-right-radius: 4px;
+    }
+
+    .bubble-bot {
+      background: var(--bubble-bot);
+      border-bottom-left-radius: 4px;
+    }
+
+    .panel-title {
+      font-family: "Noto Serif JP", serif;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--ink-soft);
+      margin-bottom: 0.8rem;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    select, textarea, button {
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+
+    select {
+      margin-top: 0.35rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: #fffdf9;
+      outline: none;
+      color: var(--ink-main);
+    }
+
+    select:focus {
+      border-color: var(--accent-green);
+      box-shadow: 0 0 0 2px rgba(124,143,128,0.22);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 110px;
+      resize: vertical;
+      margin-top: 0.9rem;
+      padding: 0.75rem 0.9rem;
+      border-radius: 14px;
+      border: 1px solid var(--border-soft);
+      background: #fffcf7;
+      outline: none;
+      line-height: 1.7;
+    }
+
+    textarea:focus {
+      border-color: var(--accent-clay);
+      box-shadow: 0 0 0 2px rgba(200,144,122,0.22);
+    }
+
+    .hint {
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+      margin-top: 0.5rem;
+    }
+
+    .actions {
+      margin-top: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 0.55rem 1.7rem;
+      background: var(--accent-green);
+      color: #fdfaf6;
+      cursor: pointer;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.16);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease;
+    }
+
+    button:hover:not(:disabled) {
+      background: var(--accent-clay);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    }
+
+    button:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.14);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      box-shadow: none;
+      cursor: default;
+    }
+
+    #status-text {
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+    }
+
+    footer {
+      margin-top: 2rem;
+      font-size: 0.75rem;
+      color: var(--ink-soft);
+      text-align: right;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>心理治療小助手</h1>
+    <p class="subtitle">在日常的空隙裡，慢慢把心情攤開來看一眼。</p>
+    <div class="badge-row">
+      <span class="badge">THERAPY NOTES</span>
+      <span class="badge">CBT & EMOTIONAL SUPPORT</span>
+      <span class="badge">SLOW PACE / SOFT TONE</span>
+    </div>
+  </header>
+
+  <div class="disclaimer">
+    本工具僅供自我整理與學習使用，不取代專業精神科醫師或臨床心理師之診斷與治療。<br>
+    若有自傷或他傷念頭，請立即尋求急診或當地緊急醫療協助。
+  </div>
+
+  <main class="layout">
+    <!-- 左側：聊天紀錄 -->
+    <section class="card" id="chat-card">
+      <div class="panel-title">SESSION LOG</div>
+      <div id="chat-box"></div>
+    </section>
+
+    <!-- 右側：輸入區 -->
+    <section class="card">
+      <div class="panel-title">INPUT PANEL</div>
+
+      <label for="mode">模式 Mode</label>
+      <select id="mode">
+        <option value="support">情緒支持 Support</option>
+        <option value="cbt">CBT 思考紀錄 CBT</option>
+        <option value="education">心理教育 Education</option>
+      </select>
+
+      <textarea id="input" placeholder="寫下一點點此刻的狀態：今天發生了什麼，心裡在想什麼，身體有什麼感覺？"></textarea>
+
+      <p class="hint">小提醒：不需要一次寫得很多，只要比剛剛多一點點就好。</p>
+
+      <div class="actions">
+        <button id="send-btn">送出</button>
+        <small id="status-text"></small>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    v0.1 · made for gentle self-reflection
+  </footer>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
