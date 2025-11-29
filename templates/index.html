@@ -39,25 +39,25 @@
       --shadow-hover: 0 8px 24px rgba(168, 191, 163, 0.2);
     }
 
-    /* 夜間模式 */
+    /* 夜間模式 - 更和諧的配色 */
     [data-theme="dark"] {
-      --peach-light: #3d2e28;
-      --peach-medium: #4a3630;
-      --peach-primary: #c9917d;
+      --peach-light: #4a3a34;
+      --peach-medium: #5c4a42;
+      --peach-primary: #d4a894;
       
-      --matcha-light: #2a332e;
-      --matcha-medium: #364239;
-      --matcha-primary: #7a9b87;
+      --matcha-light: #344038;
+      --matcha-medium: #3f4d43;
+      --matcha-primary: #8fae9d;
       
-      --cream: #2a2725;
-      --warm-white: #322f2c;
+      --cream: #2d2a27;
+      --warm-white: #38342f;
       
-      --text-main: #e5ddd6;
-      --text-soft: #a39990;
-      --border: #453d38;
+      --text-main: #e8dfd6;
+      --text-soft: #b5a99e;
+      --border: #524a44;
       
-      --shadow-light: 0 4px 16px rgba(0, 0, 0, 0.3);
-      --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
+      --shadow-light: 0 6px 20px rgba(0, 0, 0, 0.4);
+      --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
     * {
@@ -265,8 +265,21 @@
       transition: all 0.5s ease;
     }
 
+    /* 對話窗特殊樣式 - 更強的層次感 */
     #chat-card {
       background: linear-gradient(160deg, var(--cream) 0%, var(--peach-light) 100%);
+      box-shadow: 
+        var(--shadow-light),
+        0 0 0 1px rgba(255, 181, 154, 0.1),
+        inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    }
+
+    [data-theme="dark"] #chat-card {
+      background: linear-gradient(160deg, var(--cream) 0%, var(--peach-light) 100%);
+      box-shadow: 
+        0 8px 28px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(212, 168, 148, 0.15),
+        inset 0 1px 2px rgba(255, 255, 255, 0.05);
     }
 
     #chat-box {
@@ -329,6 +342,10 @@
       border-color: var(--peach-primary);
       border-bottom-left-radius: 4px;
       color: var(--text-main);
+    }
+
+    [data-theme="dark"] .bubble {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
     }
 
     .bubble-user::after {
@@ -411,6 +428,10 @@
       box-shadow: 0 0 0 3px rgba(168, 191, 163, 0.2);
     }
 
+    [data-theme="dark"] select:focus {
+      box-shadow: 0 0 0 3px rgba(143, 174, 157, 0.25);
+    }
+
     textarea {
       width: 100%;
       min-height: 120px;
@@ -429,6 +450,10 @@
     textarea:focus {
       border-color: var(--peach-primary);
       box-shadow: 0 0 0 3px rgba(255, 181, 154, 0.2);
+    }
+
+    [data-theme="dark"] textarea:focus {
+      box-shadow: 0 0 0 3px rgba(212, 168, 148, 0.25);
     }
 
     textarea::placeholder {
@@ -475,7 +500,8 @@
     }
 
     [data-theme="dark"] button {
-      background: linear-gradient(135deg, var(--peach-primary) 0%, #b8745f 100%);
+      background: linear-gradient(135deg, #d4a894 0%, #b88f7f 100%);
+      box-shadow: 0 4px 16px rgba(212, 168, 148, 0.3);
     }
 
     button::before {
