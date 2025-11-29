@@ -5,52 +5,50 @@
   <title>心理治療小助手</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- 日系雜誌風字體 -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;400;500;600&family=Noto+Sans+JP:wght@300;400;500&family=Shippori+Mincho:wght@400;500;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Noto+Serif+TC:wght@200;300;400;500;600&family=Noto+Sans+TC:wght@300;400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 
-  <!-- Reset -->
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css">
 
   <style>
     :root {
       /* 日間模式 - 蜜桃 + 抹茶雙色系 */
-      --peach-light: #ffe8dc;        /* 淡蜜桃 */
-      --peach-medium: #ffd4c4;       /* 蜜桃 */
-      --peach-primary: #ffb59a;      /* 主蜜桃 */
+      --peach-light: #ffe8dc;
+      --peach-medium: #ffd4c4;
+      --peach-primary: #ffb59a;
       
-      --matcha-light: #e8f0e6;       /* 淡抹茶 */
-      --matcha-medium: #d1e3cd;      /* 抹茶 */
-      --matcha-primary: #a8bfa3;     /* 主抹茶 */
+      --matcha-light: #e8f0e6;
+      --matcha-medium: #d1e3cd;
+      --matcha-primary: #a8bfa3;
       
-      --cream: #fffcf5;              /* 奶油白 */
-      --warm-white: #faf7f2;         /* 溫暖白 */
+      --cream: #fffcf5;
+      --warm-white: #faf7f2;
       
-      --text-main: #2d2d2d;          /* 深灰文字 */
-      --text-soft: #7a7a7a;          /* 柔和灰 */
-      --border: #e8d5d0;             /* 邊框色 */
+      --text-main: #2d2d2d;
+      --text-soft: #7a7a7a;
+      --border: #e8d5d0;
       
       --card-radius: 20px;
       --shadow-light: 0 4px 16px rgba(255, 181, 154, 0.15);
       --shadow-hover: 0 8px 24px rgba(168, 191, 163, 0.2);
     }
 
-    /* 夜間模式 - 蜜桃 + 抹茶深色調 */
+    /* 夜間模式 */
     [data-theme="dark"] {
-      --peach-light: #3d2e28;        
-      --peach-medium: #4a3630;       
-      --peach-primary: #c9917d;      
+      --peach-light: #3d2e28;
+      --peach-medium: #4a3630;
+      --peach-primary: #c9917d;
       
-      --matcha-light: #2a332e;       
-      --matcha-medium: #364239;      
-      --matcha-primary: #7a9b87;     
+      --matcha-light: #2a332e;
+      --matcha-medium: #364239;
+      --matcha-primary: #7a9b87;
       
-      --cream: #2a2725;              
-      --warm-white: #322f2c;         
+      --cream: #2a2725;
+      --warm-white: #322f2c;
       
-      --text-main: #e5ddd6;          
-      --text-soft: #a39990;          
-      --border: #453d38;             
+      --text-main: #e5ddd6;
+      --text-soft: #a39990;
+      --border: #453d38;
       
       --shadow-light: 0 4px 16px rgba(0, 0, 0, 0.3);
       --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
@@ -70,24 +68,287 @@
         radial-gradient(circle at 85% 85%, var(--matcha-light) 0%, transparent 45%),
         linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%);
       color: var(--text-main);
-      font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: "Lato", "Noto Sans TC", -apple-system, sans-serif;
       line-height: 1.8;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.02em;
       position: relative;
       animation: pageLoad 0.8s ease-out;
       transition: background 0.4s ease, color 0.4s ease;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
     @keyframes pageLoad {
-      from {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 漂浮方塊裝飾 */
+    .floating-squares {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .square {
+      position: absolute;
+      background: var(--peach-light);
+      border: 1.5px solid var(--peach-primary);
+      opacity: 0;
+      animation: floatSquare 20s infinite ease-in-out;
+      transition: background 0.4s ease, border-color 0.4s ease;
+    }
+
+    .square:nth-child(1) {
+      width: 40px;
+      height: 40px;
+      left: 10%;
+      top: 20%;
+      animation-delay: 0s;
+      animation-duration: 18s;
+      border-radius: 8px;
+    }
+
+    .square:nth-child(2) {
+      width: 25px;
+      height: 25px;
+      left: 80%;
+      top: 40%;
+      animation-delay: 2s;
+      animation-duration: 22s;
+      background: var(--matcha-light);
+      border-color: var(--matcha-primary);
+      border-radius: 6px;
+    }
+
+    .square:nth-child(3) {
+      width: 35px;
+      height: 35px;
+      left: 25%;
+      top: 65%;
+      animation-delay: 4s;
+      animation-duration: 20s;
+      border-radius: 7px;
+    }
+
+    .square:nth-child(4) {
+      width: 30px;
+      height: 30px;
+      left: 70%;
+      top: 15%;
+      animation-delay: 6s;
+      animation-duration: 24s;
+      background: var(--matcha-light);
+      border-color: var(--matcha-primary);
+      border-radius: 7px;
+    }
+
+    .square:nth-child(5) {
+      width: 20px;
+      height: 20px;
+      left: 50%;
+      top: 50%;
+      animation-delay: 8s;
+      animation-duration: 19s;
+      border-radius: 5px;
+    }
+
+    .square:nth-child(6) {
+      width: 28px;
+      height: 28px;
+      left: 15%;
+      top: 80%;
+      animation-delay: 10s;
+      animation-duration: 21s;
+      background: var(--matcha-light);
+      border-color: var(--matcha-primary);
+      border-radius: 6px;
+    }
+
+    .square:nth-child(7) {
+      width: 32px;
+      height: 32px;
+      left: 90%;
+      top: 70%;
+      animation-delay: 12s;
+      animation-duration: 23s;
+      border-radius: 7px;
+    }
+
+    .square:nth-child(8) {
+      width: 22px;
+      height: 22px;
+      left: 40%;
+      top: 30%;
+      animation-delay: 14s;
+      animation-duration: 25s;
+      background: var(--matcha-light);
+      border-color: var(--matcha-primary);
+      border-radius: 5px;
+    }
+
+    @keyframes floatSquare {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(1);
         opacity: 0;
-        transform: translateY(20px);
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
+      10% {
+        opacity: 0.3;
       }
+      50% {
+        transform: translateY(-80px) rotate(180deg) scale(1.1);
+        opacity: 0.5;
+      }
+      90% {
+        opacity: 0.3;
+      }
+      100% {
+        transform: translateY(-150px) rotate(360deg) scale(0.9);
+        opacity: 0;
+      }
+    }
+
+    /* 櫻花飄落動畫 */
+    .sakura-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .sakura {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      opacity: 0;
+      animation: sakuraFall 15s infinite ease-in-out;
+    }
+
+    /* 櫻花花瓣造型 */
+    .sakura::before,
+    .sakura::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: var(--peach-primary);
+      border-radius: 50% 0;
+      opacity: 0.6;
+      transition: background 0.4s ease;
+    }
+
+    .sakura::before {
+      transform: rotate(45deg);
+    }
+
+    .sakura::after {
+      transform: rotate(-45deg);
+    }
+
+    /* 不同的櫻花花瓣 */
+    .sakura:nth-child(1) {
+      left: 5%;
+      top: -20px;
+      animation-delay: 0s;
+      animation-duration: 12s;
+    }
+
+    .sakura:nth-child(2) {
+      left: 20%;
+      top: -20px;
+      animation-delay: 2s;
+      animation-duration: 14s;
+    }
+
+    .sakura:nth-child(3) {
+      left: 35%;
+      top: -20px;
+      animation-delay: 4s;
+      animation-duration: 13s;
+    }
+
+    .sakura:nth-child(4) {
+      left: 50%;
+      top: -20px;
+      animation-delay: 6s;
+      animation-duration: 15s;
+    }
+
+    .sakura:nth-child(5) {
+      left: 65%;
+      top: -20px;
+      animation-delay: 8s;
+      animation-duration: 12s;
+    }
+
+    .sakura:nth-child(6) {
+      left: 80%;
+      top: -20px;
+      animation-delay: 10s;
+      animation-duration: 14s;
+    }
+
+    .sakura:nth-child(7) {
+      left: 15%;
+      top: -20px;
+      animation-delay: 3s;
+      animation-duration: 13s;
+    }
+
+    .sakura:nth-child(8) {
+      left: 45%;
+      top: -20px;
+      animation-delay: 7s;
+      animation-duration: 15s;
+    }
+
+    .sakura:nth-child(9) {
+      left: 75%;
+      top: -20px;
+      animation-delay: 5s;
+      animation-duration: 12s;
+    }
+
+    .sakura:nth-child(10) {
+      left: 90%;
+      top: -20px;
+      animation-delay: 9s;
+      animation-duration: 14s;
+    }
+
+    @keyframes sakuraFall {
+      0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      90% {
+        opacity: 0.4;
+      }
+      100% {
+        transform: translateY(100vh) translateX(50px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* 為不同的櫻花添加橫向飄動變化 */
+    .sakura:nth-child(odd) {
+      animation-timing-function: ease-in-out;
+    }
+
+    .sakura:nth-child(even) {
+      animation-timing-function: ease-out;
     }
 
     /* 日夜切換按鈕 */
@@ -113,14 +374,8 @@
     }
 
     @keyframes toggleAppear {
-      from {
-        opacity: 0;
-        transform: scale(0) rotate(-180deg);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1) rotate(0deg);
-      }
+      from { opacity: 0; transform: scale(0) rotate(-180deg); }
+      to { opacity: 1; transform: scale(1) rotate(0deg); }
     }
 
     .theme-toggle:active {
@@ -132,7 +387,7 @@
       transition: transform 0.4s ease;
     }
 
-    /* 優雅的漂浮裝飾 */
+    /* 漂浮裝飾圓 */
     body::before {
       content: '';
       position: fixed;
@@ -142,10 +397,11 @@
       height: 180px;
       background: radial-gradient(circle, var(--peach-light) 0%, transparent 70%);
       border-radius: 50%;
-      opacity: 0.6;
+      opacity: 0.4;
       pointer-events: none;
       animation: gentleFloat 12s ease-in-out infinite;
       transition: background 0.4s ease;
+      z-index: 0;
     }
 
     body::after {
@@ -157,16 +413,17 @@
       height: 150px;
       background: radial-gradient(circle, var(--matcha-light) 0%, transparent 70%);
       border-radius: 50%;
-      opacity: 0.5;
+      opacity: 0.35;
       pointer-events: none;
       animation: gentleFloat 15s ease-in-out infinite reverse;
       transition: background 0.4s ease;
+      z-index: 0;
     }
 
     @keyframes gentleFloat {
-      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
-      33% { transform: translate(-12px, -18px) scale(1.05); opacity: 0.6; }
-      66% { transform: translate(8px, -8px) scale(0.98); opacity: 0.55; }
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.35; }
+      33% { transform: translate(-12px, -18px) scale(1.05); opacity: 0.45; }
+      66% { transform: translate(8px, -8px) scale(0.98); opacity: 0.4; }
     }
 
     header {
@@ -180,36 +437,30 @@
     }
 
     @keyframes slideInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h1 {
-      font-family: "Shippori Mincho", "Noto Serif JP", serif;
-      font-size: 2rem;
-      letter-spacing: 0.12em;
-      font-weight: 500;
+      font-family: "Playfair Display", "Noto Serif TC", serif;
+      font-size: 2.2rem;
+      letter-spacing: 0.05em;
+      font-weight: 600;
       margin: 0;
       color: var(--text-main);
       transition: color 0.4s ease;
     }
 
     .subtitle {
-      margin-top: 0.7rem;
-      font-family: "Shippori Mincho", "Noto Serif JP", serif;
+      margin-top: 0.8rem;
+      font-family: "Noto Serif TC", serif;
       font-size: 1.05rem;
       color: var(--text-soft);
       font-weight: 400;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.08em;
       animation: fadeIn 0.8s ease-out 0.4s both;
       transition: color 0.4s ease;
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
     @keyframes fadeIn {
@@ -222,7 +473,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 0.6rem;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
     }
 
     .badge {
@@ -232,8 +483,8 @@
       background: var(--peach-light);
       color: var(--peach-primary);
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-weight: 500;
+      letter-spacing: 0.14em;
+      font-weight: 600;
       transition: all 0.3s ease;
       opacity: 0;
       animation: badgePop 0.5s ease-out both;
@@ -244,17 +495,9 @@
     .badge:nth-child(3) { animation-delay: 0.8s; }
 
     @keyframes badgePop {
-      0% {
-        opacity: 0;
-        transform: scale(0.8) translateY(10px);
-      }
-      70% {
-        transform: scale(1.05) translateY(-2px);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
+      0% { opacity: 0; transform: scale(0.8) translateY(10px); }
+      70% { transform: scale(1.05) translateY(-2px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
     }
 
     .badge:active {
@@ -264,7 +507,7 @@
 
     /* 使用說明區塊 */
     .guide {
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       color: var(--text-soft);
       margin-bottom: 1.5rem;
       padding: 1.3rem 1.4rem;
@@ -279,9 +522,9 @@
     }
 
     .guide-title {
-      font-family: "Shippori Mincho", "Noto Serif JP", serif;
-      font-size: 0.9rem;
-      font-weight: 600;
+      font-family: "Noto Serif TC", serif;
+      font-size: 0.95rem;
+      font-weight: 500;
       color: var(--peach-primary);
       margin-bottom: 0.8rem;
       letter-spacing: 0.08em;
@@ -302,7 +545,7 @@
     }
 
     .disclaimer {
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       color: var(--text-soft);
       margin-bottom: 1.5rem;
       padding: 1.2rem 1.3rem;
@@ -317,14 +560,8 @@
     }
 
     @keyframes slideInLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
     .layout {
@@ -340,21 +577,10 @@
         grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
         gap: 1.6rem;
       }
-      body {
-        padding: 3rem 2rem 5rem;
-      }
-      h1 {
-        font-size: 2.4rem;
-      }
-      .subtitle {
-        font-size: 1.15rem;
-      }
-      .theme-toggle {
-        top: 2rem;
-        right: 2rem;
-        width: 50px;
-        height: 50px;
-      }
+      body { padding: 3rem 2rem 5rem; }
+      h1 { font-size: 2.6rem; }
+      .subtitle { font-size: 1.1rem; }
+      .theme-toggle { top: 2rem; right: 2rem; width: 50px; height: 50px; }
     }
 
     .card {
@@ -373,14 +599,8 @@
     .card:last-of-type { animation-delay: 1.1s; }
 
     @keyframes cardAppear {
-      from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .card::before {
@@ -397,9 +617,7 @@
     }
 
     #chat-card {
-      background: linear-gradient(160deg, 
-        var(--cream) 0%, 
-        var(--peach-light) 100%);
+      background: linear-gradient(160deg, var(--cream) 0%, var(--peach-light) 100%);
     }
 
     #chat-box {
@@ -409,21 +627,10 @@
       margin-top: 0.8rem;
     }
 
-    #chat-box::-webkit-scrollbar {
-      width: 4px;
-    }
-    #chat-box::-webkit-scrollbar-track {
-      background: var(--peach-light);
-      border-radius: 999px;
-    }
-    #chat-box::-webkit-scrollbar-thumb {
-      background: var(--peach-primary);
-      border-radius: 999px;
-      transition: all 0.3s ease;
-    }
-    #chat-box::-webkit-scrollbar-thumb:hover {
-      background: var(--matcha-primary);
-    }
+    #chat-box::-webkit-scrollbar { width: 4px; }
+    #chat-box::-webkit-scrollbar-track { background: var(--peach-light); border-radius: 999px; }
+    #chat-box::-webkit-scrollbar-thumb { background: var(--peach-primary); border-radius: 999px; transition: all 0.3s ease; }
+    #chat-box::-webkit-scrollbar-thumb:hover { background: var(--matcha-primary); }
 
     .msg {
       margin-bottom: 1rem;
@@ -432,19 +639,11 @@
     }
 
     @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .msg-user {
-      justify-content: flex-end;
-    }
+    .msg-user { justify-content: flex-end; }
 
     .bubble {
       max-width: 85%;
@@ -459,9 +658,7 @@
       transition: all 0.3s ease;
     }
 
-    .bubble:active {
-      transform: scale(0.98);
-    }
+    .bubble:active { transform: scale(0.98); }
 
     .bubble-user {
       background: linear-gradient(135deg, var(--matcha-light) 0%, var(--matcha-medium) 100%);
@@ -502,25 +699,25 @@
     }
 
     .panel-title {
-      font-family: "Shippori Mincho", "Noto Serif JP", serif;
-      font-size: 0.85rem;
+      font-family: "Playfair Display", "Noto Serif TC", serif;
+      font-size: 0.88rem;
       text-transform: uppercase;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.2em;
       color: var(--peach-primary);
       margin-bottom: 0.9rem;
       padding-bottom: 0.6rem;
       border-bottom: 2px solid var(--peach-light);
-      font-weight: 500;
+      font-weight: 600;
       position: relative;
       transition: all 0.4s ease;
     }
 
     label {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--text-soft);
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      font-weight: 500;
+      font-weight: 600;
       display: block;
       margin-bottom: 0.5rem;
       margin-top: 1rem;
@@ -546,14 +743,8 @@
       appearance: none;
     }
 
-    select:active {
-      transform: scale(0.98);
-    }
-
-    select:focus {
-      border-color: var(--matcha-primary);
-      box-shadow: 0 0 0 3px rgba(168, 191, 163, 0.2);
-    }
+    select:active { transform: scale(0.98); }
+    select:focus { border-color: var(--matcha-primary); box-shadow: 0 0 0 3px rgba(168, 191, 163, 0.2); }
 
     textarea {
       width: 100%;
@@ -570,15 +761,8 @@
       color: var(--text-main);
     }
 
-    textarea:focus {
-      border-color: var(--peach-primary);
-      box-shadow: 0 0 0 3px rgba(255, 181, 154, 0.2);
-    }
-
-    textarea::placeholder {
-      color: var(--text-soft);
-      opacity: 0.65;
-    }
+    textarea:focus { border-color: var(--peach-primary); box-shadow: 0 0 0 3px rgba(255, 181, 154, 0.2); }
+    textarea::placeholder { color: var(--text-soft); opacity: 0.65; }
 
     .hint {
       font-size: 0.75rem;
@@ -593,14 +777,8 @@
     }
 
     @keyframes hintFade {
-      from {
-        opacity: 0;
-        transform: translateX(-10px);
-      }
-      to {
-        opacity: 0.9;
-        transform: translateX(0);
-      }
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 0.9; transform: translateX(0); }
     }
 
     .actions {
@@ -619,7 +797,7 @@
       background: linear-gradient(135deg, var(--peach-primary) 0%, #ff9d7f 100%);
       color: #ffffff;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       box-shadow: 0 4px 16px rgba(255, 181, 154, 0.35);
@@ -646,22 +824,14 @@
       transition: width 0.6s, height 0.6s;
     }
 
-    button:active:not(:disabled)::before {
-      width: 300px;
-      height: 300px;
-    }
-
+    button:active:not(:disabled)::before { width: 300px; height: 300px; }
     button:active:not(:disabled) {
       background: linear-gradient(135deg, var(--matcha-primary) 0%, #95ac91 100%);
       transform: scale(0.96);
       box-shadow: 0 3px 12px rgba(168, 191, 163, 0.3);
     }
 
-    button:disabled {
-      opacity: 0.5;
-      box-shadow: none;
-      cursor: not-allowed;
-    }
+    button:disabled { opacity: 0.5; box-shadow: none; cursor: not-allowed; }
 
     #status-text {
       font-size: 0.75rem;
@@ -671,10 +841,7 @@
       transition: opacity 0.3s ease;
     }
 
-    #status-text:not(:empty) {
-      opacity: 1;
-      animation: statusPulse 2s ease-in-out infinite;
-    }
+    #status-text:not(:empty) { opacity: 1; animation: statusPulse 2s ease-in-out infinite; }
 
     @keyframes statusPulse {
       0%, 100% { opacity: 0.7; }
@@ -697,14 +864,8 @@
     }
 
     @keyframes footerFadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 0.7;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 0.7; transform: translateY(0); }
     }
 
     footer::before {
@@ -737,14 +898,37 @@
       transition: all 0.3s ease;
     }
 
-    .footer-author:active {
-      color: var(--peach-primary);
-      opacity: 1;
-    }
+    .footer-author:active { color: var(--peach-primary); opacity: 1; }
   </style>
 </head>
 
 <body>
+  <!-- 櫻花飄落容器 -->
+  <div class="sakura-container">
+    <div class="sakura"></div>
+    <div class="sakura"></div>
+    <div class="sakura"></div>
+    <div class="sakura"></div>
+    <div class="sakura"></div>
+    <div class="sakura"></div>
+    <div class="sakura"></div>
+    <div class="sakura"></div>
+    <div class="sakura"></div>
+    <div class="sakura"></div>
+  </div>
+
+  <!-- 漂浮方塊裝飾容器 -->
+  <div class="floating-squares">
+    <div class="square"></div>
+    <div class="square"></div>
+    <div class="square"></div>
+    <div class="square"></div>
+    <div class="square"></div>
+    <div class="square"></div>
+    <div class="square"></div>
+    <div class="square"></div>
+  </div>
+
   <!-- 日夜切換按鈕 -->
   <button class="theme-toggle" id="theme-toggle" aria-label="切換日夜模式">
     <span class="theme-icon">🌙</span>
@@ -762,19 +946,18 @@
 
   <!-- 使用說明區塊 -->
   <div class="guide">
-    <div class="guide-title">✦ 使用說明</div>
-    <ul class="guide-list">
-      <li><strong>情緒支持</strong>：當你需要被傾聽、需要陪伴時，選擇這個模式</li>
-      <li><strong>CBT 思考紀錄</strong>：記錄並整理自動化思考、情緒與行為模式</li>
-      <li><strong>心理教育</strong>：了解心理健康相關知識與應對策略</li>
-    </ul>
-  </div>
+    <div class="guide-title">✦ 測試版小小說明 ✦ from 阿蘇 ✦</div>
+    這是一個還在慢慢長大的測試版本，目前使用 OpenAI 的 ChatGPT 4.1 模型陪你一起整理心情。<br>
+    回覆有時候可能需要一點點時間，謝謝你願意耐心等候。<br>
+    目前所有對話所產生的費用都由開發者自行負擔，若未來超過可承擔的用量，服務可能會暫時休息一下再回來。<br>
+    請把這裡當成一個安靜的小角落，擁抱一切的不完美<br>
+    </div>
 
-  <div class="disclaimer">
-    心理治療不是把人修得更完美，而是陪你成為更自在的真實自己。<br>
-    而真正能讓人鬆一口氣的，往往不是建議，而是終於有人願意好好聽你說話。<br>
-    本工具僅供自我整理與學習使用，不取代專業精神科醫師或臨床心理師之診斷與治療。<br>
-    若有自傷或他傷念頭，請立即尋求急診或當地緊急醫療協助。
+    <div class="disclaimer">
+        心理治療不是把人修得更完美，而是陪你成為更自在的真實自己。<br>
+        而真正能讓人鬆一口氣的，往往不是建議，而是終於有人願意好好聽你說話。<br>
+        本工具僅供自我整理與學習使用，不取代專業精神科醫師或臨床心理師之診斷與治療。<br>
+        若有自傷或他傷念頭，請立即尋求急診或當地緊急醫療協助。
   </div>
 
   <main class="layout">
@@ -796,9 +979,9 @@
       </select>
 
       <label for="input">訊息 Message</label>
-      <textarea id="input" placeholder="寫下一點點此刻的狀態 | 現在在哪裡 | 上一秒浮現的想法 | 所有的困惑"></textarea>
+      <textarea id="input" placeholder="說說此刻的心情 | 現在在哪裡 | 上一秒浮現的想法 | 所有的困惑"></textarea>
 
-      <p class="hint">( ˶'ᵕ'🫶)💕不需要一次寫得很多，只要比剛剛多一點點就好。</p>
+      <p class="hint">( ˶'ᵕ'🫶)💕不需要一次寫得很多，比剛剛多一點點就好。</p>
 
       <div class="actions">
         <button id="send-btn">送出</button>
@@ -808,21 +991,18 @@
   </main>
 
   <footer>
-    <span class="footer-author">Produced by milk90118 · Wen-Yu Su</span>
+    <span class="footer-author">Produced by Wen-Yu Su Fb: 蘇玟予</span>
   </footer>
 
   <script>
-    // 日夜模式切換功能
     const themeToggle = document.getElementById('theme-toggle');
     const themeIcon = themeToggle.querySelector('.theme-icon');
     const html = document.documentElement;
 
-    // 從 localStorage 讀取主題偏好
     const savedTheme = localStorage.getItem('theme') || 'light';
     html.setAttribute('data-theme', savedTheme);
     themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
 
-    // 切換主題
     themeToggle.addEventListener('click', () => {
       const currentTheme = html.getAttribute('data-theme');
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -831,8 +1011,6 @@
       localStorage.setItem('theme', newTheme);
       themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
     });
-
-    // 原有的 script.js 功能應該在這裡引入
   </script>
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
