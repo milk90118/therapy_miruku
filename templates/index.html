@@ -5,10 +5,15 @@
   <title>心理治療小助手</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Noto+Serif+TC:wght@200;300;400;500;600&family=Noto+Sans+TC:wght@300;400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 
+  <!-- Normalize -->
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css">
+
+  <!-- 動畫效果（櫻花、星星、漂浮方塊） -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='effects.css') }}">
 
   <style>
     :root {
@@ -83,274 +88,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* 漂浮方塊裝飾 */
-    .floating-squares {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .square {
-      position: absolute;
-      background: var(--peach-light);
-      border: 1.5px solid var(--peach-primary);
-      opacity: 0;
-      animation: floatSquare 20s infinite ease-in-out;
-      transition: background 0.4s ease, border-color 0.4s ease;
-    }
-
-    .square:nth-child(1) {
-      width: 40px;
-      height: 40px;
-      left: 10%;
-      top: 20%;
-      animation-delay: 0s;
-      animation-duration: 18s;
-      border-radius: 8px;
-    }
-
-    .square:nth-child(2) {
-      width: 25px;
-      height: 25px;
-      left: 80%;
-      top: 40%;
-      animation-delay: 2s;
-      animation-duration: 22s;
-      background: var(--matcha-light);
-      border-color: var(--matcha-primary);
-      border-radius: 6px;
-    }
-
-    .square:nth-child(3) {
-      width: 35px;
-      height: 35px;
-      left: 25%;
-      top: 65%;
-      animation-delay: 4s;
-      animation-duration: 20s;
-      border-radius: 7px;
-    }
-
-    .square:nth-child(4) {
-      width: 30px;
-      height: 30px;
-      left: 70%;
-      top: 15%;
-      animation-delay: 6s;
-      animation-duration: 24s;
-      background: var(--matcha-light);
-      border-color: var(--matcha-primary);
-      border-radius: 7px;
-    }
-
-    .square:nth-child(5) {
-      width: 20px;
-      height: 20px;
-      left: 50%;
-      top: 50%;
-      animation-delay: 8s;
-      animation-duration: 19s;
-      border-radius: 5px;
-    }
-
-    .square:nth-child(6) {
-      width: 28px;
-      height: 28px;
-      left: 15%;
-      top: 80%;
-      animation-delay: 10s;
-      animation-duration: 21s;
-      background: var(--matcha-light);
-      border-color: var(--matcha-primary);
-      border-radius: 6px;
-    }
-
-    .square:nth-child(7) {
-      width: 32px;
-      height: 32px;
-      left: 90%;
-      top: 70%;
-      animation-delay: 12s;
-      animation-duration: 23s;
-      border-radius: 7px;
-    }
-
-    .square:nth-child(8) {
-      width: 22px;
-      height: 22px;
-      left: 40%;
-      top: 30%;
-      animation-delay: 14s;
-      animation-duration: 25s;
-      background: var(--matcha-light);
-      border-color: var(--matcha-primary);
-      border-radius: 5px;
-    }
-
-    @keyframes floatSquare {
-      0% {
-        transform: translateY(0) rotate(0deg) scale(1);
-        opacity: 0;
-      }
-      10% {
-        opacity: 0.3;
-      }
-      50% {
-        transform: translateY(-80px) rotate(180deg) scale(1.1);
-        opacity: 0.5;
-      }
-      90% {
-        opacity: 0.3;
-      }
-      100% {
-        transform: translateY(-150px) rotate(360deg) scale(0.9);
-        opacity: 0;
-      }
-    }
-
-    /* 櫻花飄落動畫 */
-    .sakura-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .sakura {
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      opacity: 0;
-      animation: sakuraFall 15s infinite ease-in-out;
-    }
-
-    /* 櫻花花瓣造型 */
-    .sakura::before,
-    .sakura::after {
-      content: '';
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      background: var(--peach-primary);
-      border-radius: 50% 0;
-      opacity: 0.6;
-      transition: background 0.4s ease;
-    }
-
-    .sakura::before {
-      transform: rotate(45deg);
-    }
-
-    .sakura::after {
-      transform: rotate(-45deg);
-    }
-
-    /* 不同的櫻花花瓣 */
-    .sakura:nth-child(1) {
-      left: 5%;
-      top: -20px;
-      animation-delay: 0s;
-      animation-duration: 12s;
-    }
-
-    .sakura:nth-child(2) {
-      left: 20%;
-      top: -20px;
-      animation-delay: 2s;
-      animation-duration: 14s;
-    }
-
-    .sakura:nth-child(3) {
-      left: 35%;
-      top: -20px;
-      animation-delay: 4s;
-      animation-duration: 13s;
-    }
-
-    .sakura:nth-child(4) {
-      left: 50%;
-      top: -20px;
-      animation-delay: 6s;
-      animation-duration: 15s;
-    }
-
-    .sakura:nth-child(5) {
-      left: 65%;
-      top: -20px;
-      animation-delay: 8s;
-      animation-duration: 12s;
-    }
-
-    .sakura:nth-child(6) {
-      left: 80%;
-      top: -20px;
-      animation-delay: 10s;
-      animation-duration: 14s;
-    }
-
-    .sakura:nth-child(7) {
-      left: 15%;
-      top: -20px;
-      animation-delay: 3s;
-      animation-duration: 13s;
-    }
-
-    .sakura:nth-child(8) {
-      left: 45%;
-      top: -20px;
-      animation-delay: 7s;
-      animation-duration: 15s;
-    }
-
-    .sakura:nth-child(9) {
-      left: 75%;
-      top: -20px;
-      animation-delay: 5s;
-      animation-duration: 12s;
-    }
-
-    .sakura:nth-child(10) {
-      left: 90%;
-      top: -20px;
-      animation-delay: 9s;
-      animation-duration: 14s;
-    }
-
-    @keyframes sakuraFall {
-      0% {
-        transform: translateY(0) translateX(0) rotate(0deg);
-        opacity: 0;
-      }
-      10% {
-        opacity: 0.8;
-      }
-      90% {
-        opacity: 0.4;
-      }
-      100% {
-        transform: translateY(100vh) translateX(50px) rotate(360deg);
-        opacity: 0;
-      }
-    }
-
-    /* 為不同的櫻花添加橫向飄動變化 */
-    .sakura:nth-child(odd) {
-      animation-timing-function: ease-in-out;
-    }
-
-    .sakura:nth-child(even) {
-      animation-timing-function: ease-out;
-    }
-
     /* 日夜切換按鈕 */
     .theme-toggle {
       position: fixed;
@@ -387,7 +124,7 @@
       transition: transform 0.4s ease;
     }
 
-    /* 漂浮裝飾圓 */
+    /* 漂浮裝飾圓（背景柔光） */
     body::before {
       content: '';
       position: fixed;
@@ -903,7 +640,7 @@
 </head>
 
 <body>
-  <!-- 櫻花飄落容器 -->
+  <!-- 櫻花飄落容器（動畫由 effects.css 控制） -->
   <div class="sakura-container">
     <div class="sakura"></div>
     <div class="sakura"></div>
@@ -917,7 +654,7 @@
     <div class="sakura"></div>
   </div>
 
-  <!-- 漂浮方塊裝飾容器 -->
+  <!-- 漂浮方塊裝飾容器（動畫由 effects.css 控制） -->
   <div class="floating-squares">
     <div class="square"></div>
     <div class="square"></div>
@@ -927,6 +664,20 @@
     <div class="square"></div>
     <div class="square"></div>
     <div class="square"></div>
+  </div>
+
+  <!-- 如果有星星動畫，也可以加上 -->
+  <div class="star-container">
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
   </div>
 
   <!-- 日夜切換按鈕 -->
@@ -1014,6 +765,7 @@
       themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
     });
   </script>
+
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

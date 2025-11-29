@@ -1,0 +1,130 @@
+/* ============================
+   櫻花飄落動畫
+============================ */
+.sakura-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.sakura {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  opacity: 0;
+  animation: sakuraFall 15s infinite ease-in-out;
+}
+
+.sakura::before,
+.sakura::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: var(--peach-primary);
+  border-radius: 50% 0;
+  opacity: 0.6;
+  transition: background 0.4s ease;
+}
+
+.sakura::before { transform: rotate(45deg); }
+.sakura::after  { transform: rotate(-45deg); }
+
+@keyframes sakuraFall {
+  0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+  10%  { opacity: 0.8; }
+  90%  { opacity: 0.4; }
+  100% { transform: translateY(100vh) translateX(50px) rotate(360deg); opacity: 0; }
+}
+
+/* 10 個花瓣位置 */
+.sakura:nth-child(1)  { left: 5%;  top: -20px; animation-delay: 0s; }
+.sakura:nth-child(2)  { left: 20%; top: -20px; animation-delay: 2s; }
+.sakura:nth-child(3)  { left: 35%; top: -20px; animation-delay: 4s; }
+.sakura:nth-child(4)  { left: 50%; top: -20px; animation-delay: 6s; }
+.sakura:nth-child(5)  { left: 65%; top: -20px; animation-delay: 8s; }
+.sakura:nth-child(6)  { left: 80%; top: -20px; animation-delay: 10s; }
+.sakura:nth-child(7)  { left: 15%; top: -20px; animation-delay: 3s; }
+.sakura:nth-child(8)  { left: 45%; top: -20px; animation-delay: 7s; }
+.sakura:nth-child(9)  { left: 75%; top: -20px; animation-delay: 5s; }
+.sakura:nth-child(10) { left: 90%; top: -20px; animation-delay: 9s; }
+
+
+/* ============================
+   夜空星星閃爍動畫
+============================ */
+.star-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  animation: starTwinkle 6s infinite ease-in-out;
+}
+
+/* 10 顆星星位置 */
+.star:nth-child(1)  { top: 8%;  left: 12%; animation-delay: 0s; }
+.star:nth-child(2)  { top: 18%; left: 70%; animation-delay: 1.2s; }
+.star:nth-child(3)  { top: 30%; left: 25%; animation-delay: 2.1s; }
+.star:nth-child(4)  { top: 42%; left: 80%; animation-delay: 0.8s; }
+.star:nth-child(5)  { top: 55%; left: 15%; animation-delay: 1.8s; }
+.star:nth-child(6)  { top: 60%; left: 50%; animation-delay: 2.7s; }
+.star:nth-child(7)  { top: 68%; left: 85%; animation-delay: 0.4s; }
+.star:nth-child(8)  { top: 75%; left: 32%; animation-delay: 3.1s; }
+.star:nth-child(9)  { top: 82%; left: 60%; animation-delay: 1.5s; }
+.star:nth-child(10) { top: 90%; left: 20%; animation-delay: 2.3s; }
+
+@keyframes starTwinkle {
+  0%   { opacity: 0; transform: scale(0.6); }
+  20%  { opacity: 1; transform: scale(1); }
+  50%  { opacity: 0.3; transform: scale(0.8); }
+  80%  { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 0; transform: scale(0.6); }
+}
+
+
+/* ============================
+   漂浮方塊動畫（原本的）
+============================ */
+.floating-squares {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.square {
+  position: absolute;
+  background: var(--peach-light);
+  border: 1.5px solid var(--peach-primary);
+  opacity: 0;
+  animation: floatSquare 20s infinite ease-in-out;
+  transition: background 0.4s ease, border-color 0.4s ease;
+}
+
+@keyframes floatSquare {
+  0%   { transform: translateY(0) rotate(0deg) scale(1); opacity: 0; }
+  10%  { opacity: 0.3; }
+  50%  { transform: translateY(-80px) rotate(180deg) scale(1.1); opacity: 0.5; }
+  90%  { opacity: 0.3; }
+  100% { transform: translateY(-150px) rotate(360deg) scale(0.9); opacity: 0; }
+}
