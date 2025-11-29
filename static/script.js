@@ -1,38 +1,58 @@
-// 既有 DOM 元素
+// =========================
+// DOM Element 取得
+// =========================
 const chatBox = document.getElementById("chat-box");
 const inputEl = document.getElementById("input");
 const modeEl = document.getElementById("mode");
 const sendBtn = document.getElementById("send-btn");
 const statusText = document.getElementById("status-text");
-const modeHintEl = document.getElementById("mode-hint"); // 新增：模式提示文字
+const modeHintEl = document.getElementById("mode-hint");
 
+const themeToggle = document.getElementById("theme-toggle");
+const themeIcon = themeToggle ? themeToggle.querySelector(".theme-icon") : null;
+const html = document.documentElement;
+
+// =========================
+// LocalStorage：歷史訊息
+// =========================
 let messages = loadMessages();
 renderAllMessages();
 
-// 送出事件
-sendBtn.addEventListener("click", handleSend);
-inputEl.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    handleSend();
-  }
-});
+// =========================
+/* 主事件綁定 */
+// =========================
+if (sendBtn) {
+  sendBtn.addEventListener("click", handleSend);
+}
 
-// 模式切換時更新 UI
-modeEl.addEventListener("change", (e) => {
-  updateModeUI(e.target.value);
-});
+if (inputEl) {
+  inputEl.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  });
+}
 
-// 初始載入時套一次模式提示
-updateModeUI(modeEl.value);
+// 模式切換 → 更新 placeholder & hint
+if (modeEl) {
+  modeEl.addEventListener("change", (e) => {
+    updateModeUI(e.target.value);
+  });
+  // 初始套一次
+  updateModeUI(modeEl.value);
+}
 
+// =========================
+// 題目：送出訊息
+// =========================
 function handleSend() {
+  if (!inputEl) return;
   const text = inputEl.value.trim();
   if (!text) return;
 
-  const mode = modeEl.value;
+  const mode = modeEl ? modeEl.value : "support";
 
-  // push user message
   const userMsg = { role: "user", content: text };
   messages.push(userMsg);
   saveMessages();
@@ -42,9 +62,12 @@ function handleSend() {
   callBackend(mode);
 }
 
+// =========================
+// 呼叫後端 /api/chat
+// =========================
 function callBackend(mode) {
-  sendBtn.disabled = true;
-  statusText.textContent = "思考中…";
+  if (sendBtn) sendBtn.disabled = true;
+  if (statusText) statusText.textContent = "思考中…";
 
   fetch("/api/chat", {
     method: "POST",
@@ -70,12 +93,17 @@ function callBackend(mode) {
       appendMessageToUI(errMsg);
     })
     .finally(() => {
-      sendBtn.disabled = false;
-      statusText.textContent = "";
+      if (sendBtn) sendBtn.disabled = false;
+      if (statusText) statusText.textContent = "";
     });
 }
 
+// =========================
+// UI 渲染
+// =========================
 function appendMessageToUI(msg) {
+  if (!chatBox) return;
+
   const div = document.createElement("div");
   div.classList.add("msg");
   if (msg.role === "user") div.classList.add("msg-user");
@@ -91,10 +119,14 @@ function appendMessageToUI(msg) {
 }
 
 function renderAllMessages() {
+  if (!chatBox) return;
   chatBox.innerHTML = "";
   messages.forEach(appendMessageToUI);
 }
 
+// =========================
+// LocalStorage 存取
+// =========================
 function saveMessages() {
   try {
     localStorage.setItem("therapy_messages", JSON.stringify(messages));
@@ -113,8 +145,9 @@ function loadMessages() {
   }
 }
 
-// ---------- 模式切換：不同情境提示 ----------
-
+// =========================
+// 模式提示：不同 mode 不同 placeholder/hint
+// =========================
 function updateModeUI(mode) {
   if (!inputEl || !modeHintEl) return;
 
@@ -146,3 +179,53 @@ function updateModeUI(mode) {
       "( ˶'ᵕ'🫶)💕 不需要一次寫得很多，只要比剛剛多一點點就好。";
   }
 }
+
+// =========================
+// 主題切換（日 / 夜）
+// =========================
+(function initTheme() {
+  if (!themeToggle || !themeIcon) return;
+
+  const savedTheme = localStorage.getItem("theme") || "light";
+  html.setAttribute("data-theme", savedTheme);
+  themeIcon.textContent = savedTheme === "dark" ? "☀️" : "🌙";
+
+  themeToggle.addEventListener("click", () => {
+    const currentTheme = html.getAttribute("data-theme");
+    const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+    html.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+    themeIcon.textContent = newTheme === "dark" ? "☀️" : "🌙";
+  });
+})();
+
+// =========================
+// 櫻花 & 星星自動生成
+// =========================
+document.addEventListener("DOMContentLoaded", () => {
+  const sakuraContainer = document.querySelector(".sakura-container");
+  const starContainer = document.querySelector(".star-container");
+
+  if (sakuraContainer) {
+    for (let i = 0; i < 20; i++) {
+      const petal = document.createElement("div");
+      petal.className = "sakura";
+      petal.style.left = Math.random() * 100 + "%";
+      petal.style.animationDelay = Math.random() * 8 + "s";
+      petal.style.animationDuration = 10 + Math.random() * 6 + "s";
+      sakuraContainer.appendChild(petal);
+    }
+  }
+
+  if (starContainer) {
+    for (let i = 0; i < 20; i++) {
+      const star = document.createElement("div");
+      star.className = "star";
+      star.style.left = Math.random() * 100 + "%";
+      star.style.top = Math.random() * 100 + "%";
+      star.style.animationDelay = Math.random() * 3 + "s";
+      starContainer.appendChild(star);
+    }
+  }
+});

@@ -1,6 +1,29 @@
-/* ============================
-   櫻花飄落動畫
-============================ */
+/* =========================================
+   全站動畫 & 裝飾效果（櫻花 / 星星 / 方塊）
+   ========================================= */
+
+/* ---------- 櫻花 & 星星 顯示邏輯 ---------- */
+
+/* 白天：櫻花顯示，星星隱藏 */
+[data-theme="light"] .sakura-container {
+  display: block;
+}
+
+[data-theme="light"] .star-container {
+  display: none;
+}
+
+/* 夜間：星星顯示，櫻花隱藏 */
+[data-theme="dark"] .sakura-container {
+  display: none;
+}
+
+[data-theme="dark"] .star-container {
+  display: block;
+}
+
+/* ---------- 櫻花容器 ---------- */
+
 .sakura-container {
   position: fixed;
   top: 0;
@@ -8,99 +31,108 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 0;
   overflow: hidden;
+  z-index: 0;
 }
 
+/* 單片櫻花 */
 .sakura {
   position: absolute;
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   opacity: 0;
-  animation: sakuraFall 15s infinite ease-in-out;
+  animation: sakuraFall 12s infinite ease-in-out;
 }
 
 .sakura::before,
 .sakura::after {
   content: '';
   position: absolute;
-  width: 12px;
-  height: 12px;
-  background: var(--peach-primary);
+  width: 14px;
+  height: 14px;
+  background: #ffb6c8;
   border-radius: 50% 0;
-  opacity: 0.6;
-  transition: background 0.4s ease;
+  opacity: 0.7;
 }
 
-.sakura::before { transform: rotate(45deg); }
-.sakura::after  { transform: rotate(-45deg); }
+.sakura::before {
+  transform: rotate(40deg);
+}
 
+.sakura::after {
+  transform: rotate(-40deg);
+}
+
+/* 櫻花落下動畫 */
 @keyframes sakuraFall {
-  0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
-  10%  { opacity: 0.8; }
-  90%  { opacity: 0.4; }
-  100% { transform: translateY(100vh) translateX(50px) rotate(360deg); opacity: 0; }
+  0% {
+    transform: translateY(-10%) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(110vh) translateX(40px) rotate(360deg);
+    opacity: 0;
+  }
 }
 
-/* 10 個花瓣位置 */
-.sakura:nth-child(1)  { left: 5%;  top: -20px; animation-delay: 0s; }
-.sakura:nth-child(2)  { left: 20%; top: -20px; animation-delay: 2s; }
-.sakura:nth-child(3)  { left: 35%; top: -20px; animation-delay: 4s; }
-.sakura:nth-child(4)  { left: 50%; top: -20px; animation-delay: 6s; }
-.sakura:nth-child(5)  { left: 65%; top: -20px; animation-delay: 8s; }
-.sakura:nth-child(6)  { left: 80%; top: -20px; animation-delay: 10s; }
-.sakura:nth-child(7)  { left: 15%; top: -20px; animation-delay: 3s; }
-.sakura:nth-child(8)  { left: 45%; top: -20px; animation-delay: 7s; }
-.sakura:nth-child(9)  { left: 75%; top: -20px; animation-delay: 5s; }
-.sakura:nth-child(10) { left: 90%; top: -20px; animation-delay: 9s; }
+/* ---------- 星星容器 ---------- */
 
-
-/* ============================
-   夜空星星閃爍動畫
-============================ */
 .star-container {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  z-index: 0;
   overflow: hidden;
+  z-index: 0;
 }
 
+/* 單顆星星 */
 .star {
   position: absolute;
-  width: 4px;
-  height: 4px;
+  width: 3px;
+  height: 3px;
+  background: #fff8cc;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
   opacity: 0;
-  animation: starTwinkle 6s infinite ease-in-out;
+  animation: starBlink 3s infinite ease-in-out alternate;
 }
 
-/* 10 顆星星位置 */
-.star:nth-child(1)  { top: 8%;  left: 12%; animation-delay: 0s; }
-.star:nth-child(2)  { top: 18%; left: 70%; animation-delay: 1.2s; }
-.star:nth-child(3)  { top: 30%; left: 25%; animation-delay: 2.1s; }
-.star:nth-child(4)  { top: 42%; left: 80%; animation-delay: 0.8s; }
-.star:nth-child(5)  { top: 55%; left: 15%; animation-delay: 1.8s; }
-.star:nth-child(6)  { top: 60%; left: 50%; animation-delay: 2.7s; }
-.star:nth-child(7)  { top: 68%; left: 85%; animation-delay: 0.4s; }
-.star:nth-child(8)  { top: 75%; left: 32%; animation-delay: 3.1s; }
-.star:nth-child(9)  { top: 82%; left: 60%; animation-delay: 1.5s; }
-.star:nth-child(10) { top: 90%; left: 20%; animation-delay: 2.3s; }
-
-@keyframes starTwinkle {
-  0%   { opacity: 0; transform: scale(0.6); }
-  20%  { opacity: 1; transform: scale(1); }
-  50%  { opacity: 0.3; transform: scale(0.8); }
-  80%  { opacity: 1; transform: scale(1.05); }
-  100% { opacity: 0; transform: scale(0.6); }
+/* 星星閃爍 */
+@keyframes starBlink {
+  0% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.4);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
 }
 
+/* 你如果之後想讓星星微微移動，可以搭配第二個動畫 */
+@keyframes starFloat {
+  0% {
+    transform: translateY(0) translateX(0);
+  }
+  100% {
+    transform: translateY(-20px) translateX(10px);
+  }
+}
 
-/* ============================
-   漂浮方塊動畫（原本的）
-============================ */
+/* ---------- 漂浮方塊裝飾 ---------- */
+
 .floating-squares {
   position: fixed;
   top: 0;
@@ -121,10 +153,280 @@
   transition: background 0.4s ease, border-color 0.4s ease;
 }
 
+.square:nth-child(1) {
+  width: 40px;
+  height: 40px;
+  left: 10%;
+  top: 20%;
+  animation-delay: 0s;
+  animation-duration: 18s;
+  border-radius: 8px;
+}
+
+.square:nth-child(2) {
+  width: 25px;
+  height: 25px;
+  left: 80%;
+  top: 40%;
+  animation-delay: 2s;
+  animation-duration: 22s;
+  background: var(--matcha-light);
+  border-color: var(--matcha-primary);
+  border-radius: 6px;
+}
+
+.square:nth-child(3) {
+  width: 35px;
+  height: 35px;
+  left: 25%;
+  top: 65%;
+  animation-delay: 4s;
+  animation-duration: 20s;
+  border-radius: 7px;
+}
+
+.square:nth-child(4) {
+  width: 30px;
+  height: 30px;
+  left: 70%;
+  top: 15%;
+  animation-delay: 6s;
+  animation-duration: 24s;
+  background: var(--matcha-light);
+  border-color: var(--matcha-primary);
+  border-radius: 7px;
+}
+
+.square:nth-child(5) {
+  width: 20px;
+  height: 20px;
+  left: 50%;
+  top: 50%;
+  animation-delay: 8s;
+  animation-duration: 19s;
+  border-radius: 5px;
+}
+
+.square:nth-child(6) {
+  width: 28px;
+  height: 28px;
+  left: 15%;
+  top: 80%;
+  animation-delay: 10s;
+  animation-duration: 21s;
+  background: var(--matcha-light);
+  border-color: var(--matcha-primary);
+  border-radius: 6px;
+}
+
+.square:nth-child(7) {
+  width: 32px;
+  height: 32px;
+  left: 90%;
+  top: 70%;
+  animation-delay: 12s;
+  animation-duration: 23s;
+  border-radius: 7px;
+}
+
+.square:nth-child(8) {
+  width: 22px;
+  height: 22px;
+  left: 40%;
+  top: 30%;
+  animation-delay: 14s;
+  animation-duration: 25s;
+  background: var(--matcha-light);
+  border-color: var(--matcha-primary);
+  border-radius: 5px;
+}
+
+/* 漂浮動畫 */
 @keyframes floatSquare {
-  0%   { transform: translateY(0) rotate(0deg) scale(1); opacity: 0; }
-  10%  { opacity: 0.3; }
-  50%  { transform: translateY(-80px) rotate(180deg) scale(1.1); opacity: 0.5; }
-  90%  { opacity: 0.3; }
-  100% { transform: translateY(-150px) rotate(360deg) scale(0.9); opacity: 0; }
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-80px) rotate(180deg) scale(1.1);
+    opacity: 0.5;
+  }
+  90% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(-150px) rotate(360deg) scale(0.9);
+    opacity: 0;
+  }
+}
+
+/* ---------- 身後柔光圓（body::before / ::after） ---------- */
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 5%;
+  right: 3%;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, var(--peach-light) 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0.4;
+  pointer-events: none;
+  animation: gentleFloat 12s ease-in-out infinite;
+  transition: background 0.4s ease;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  bottom: 10%;
+  left: 5%;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, var(--matcha-light) 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0.35;
+  pointer-events: none;
+  animation: gentleFloat 15s ease-in-out infinite reverse;
+  transition: background 0.4s ease;
+  z-index: 0;
+}
+
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.35;
+  }
+  33% {
+    transform: translate(-12px, -18px) scale(1.05);
+    opacity: 0.45;
+  }
+  66% {
+    transform: translate(8px, -8px) scale(0.98);
+    opacity: 0.4;
+  }
+}
+
+/* ---------- 其它元件進場 & 小動畫 ---------- */
+
+@keyframes pageLoad {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toggleAppear {
+  from {
+    opacity: 0;
+    transform: scale(0) rotate(-180deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes badgePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(10px);
+  }
+  70% {
+    transform: scale(1.05) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hintFade {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 0.9;
+    transform: translateX(0);
+  }
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 1;   }
+}
+
+@keyframes footerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+}
+
+@keyframes symbolRotate {
+  0%, 100% { transform: rotate(0deg); }
+  50%      { transform: rotate(180deg); }
 }
