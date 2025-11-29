@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- 日系雜誌風字體 -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;400;500;600&family=Noto+Sans+JP:wght@300;400;500&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;400;500;600&family=Noto+Sans+JP:wght@300;400;500&family=Shippori+Mincho:wght@400;500;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
   <!-- Reset -->
   <link rel="stylesheet"
@@ -14,14 +14,14 @@
 
   <style>
     :root {
-      /* 日間模式 - 更鮮明的日本溫柔色票 */
-      --sakura-pink: #ffb3c1;        /* 櫻花粉 - 更鮮明 */
-      --sakura-light: #ffe4e9;       /* 淡櫻花 */
-      --sakura-bg: #fff5f7;          /* 櫻花背景 */
+      /* 日間模式 - 蜜桃 + 抹茶雙色系 */
+      --peach-light: #ffe8dc;        /* 淡蜜桃 */
+      --peach-medium: #ffd4c4;       /* 蜜桃 */
+      --peach-primary: #ffb59a;      /* 主蜜桃 */
       
-      --matcha-green: #88c9a1;       /* 抹茶綠 - 更鮮明 */
-      --matcha-light: #d4f0df;       /* 淡抹茶 */
-      --matcha-bg: #f0faf4;          /* 抹茶背景 */
+      --matcha-light: #e8f0e6;       /* 淡抹茶 */
+      --matcha-medium: #d1e3cd;      /* 抹茶 */
+      --matcha-primary: #a8bfa3;     /* 主抹茶 */
       
       --cream: #fffcf5;              /* 奶油白 */
       --warm-white: #faf7f2;         /* 溫暖白 */
@@ -31,19 +31,19 @@
       --border: #e8d5d0;             /* 邊框色 */
       
       --card-radius: 20px;
-      --shadow-light: 0 4px 16px rgba(255, 179, 193, 0.15);
-      --shadow-hover: 0 8px 24px rgba(136, 201, 161, 0.2);
+      --shadow-light: 0 4px 16px rgba(255, 181, 154, 0.15);
+      --shadow-hover: 0 8px 24px rgba(168, 191, 163, 0.2);
     }
 
-    /* 夜間模式 - 柔和深色調 */
+    /* 夜間模式 - 蜜桃 + 抹茶深色調 */
     [data-theme="dark"] {
-      --sakura-pink: #d4889b;        
-      --sakura-light: #4a3840;       
-      --sakura-bg: #2d2328;          
+      --peach-light: #3d2e28;        
+      --peach-medium: #4a3630;       
+      --peach-primary: #c9917d;      
       
-      --matcha-green: #6b9b7f;       
-      --matcha-light: #384a3f;       
-      --matcha-bg: #252d28;          
+      --matcha-light: #2a332e;       
+      --matcha-medium: #364239;      
+      --matcha-primary: #7a9b87;     
       
       --cream: #2a2725;              
       --warm-white: #322f2c;         
@@ -66,7 +66,7 @@
       margin: 0 auto;
       padding: 1.5rem 1rem 4rem;
       background: 
-        radial-gradient(circle at 15% 15%, var(--sakura-light) 0%, transparent 45%),
+        radial-gradient(circle at 15% 15%, var(--peach-light) 0%, transparent 45%),
         radial-gradient(circle at 85% 85%, var(--matcha-light) 0%, transparent 45%),
         linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%);
       color: var(--text-main);
@@ -90,7 +90,7 @@
       }
     }
 
-    /* 日夜切換按鈕 - 手機優化 */
+    /* 日夜切換按鈕 */
     .theme-toggle {
       position: fixed;
       top: 1.2rem;
@@ -98,7 +98,7 @@
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      border: 2px solid var(--sakura-pink);
+      border: 2px solid var(--peach-primary);
       background: var(--cream);
       cursor: pointer;
       display: flex;
@@ -125,7 +125,7 @@
 
     .theme-toggle:active {
       transform: scale(0.9);
-      box-shadow: 0 2px 8px rgba(255, 179, 193, 0.3);
+      box-shadow: 0 2px 8px rgba(255, 181, 154, 0.3);
     }
 
     .theme-icon {
@@ -140,7 +140,7 @@
       right: 3%;
       width: 180px;
       height: 180px;
-      background: radial-gradient(circle, var(--sakura-light) 0%, transparent 70%);
+      background: radial-gradient(circle, var(--peach-light) 0%, transparent 70%);
       border-radius: 50%;
       opacity: 0.6;
       pointer-events: none;
@@ -171,7 +171,7 @@
 
     header {
       margin-bottom: 2rem;
-      border-bottom: 2.5px solid var(--sakura-pink);
+      border-bottom: 2.5px solid var(--peach-primary);
       padding-bottom: 1.3rem;
       position: relative;
       z-index: 1;
@@ -201,13 +201,15 @@
     }
 
     .subtitle {
-      margin-top: 0.6rem;
-      font-size: 0.95rem;
+      margin-top: 0.7rem;
+      font-family: "Shippori Mincho", "Noto Serif JP", serif;
+      font-size: 1.05rem;
       color: var(--text-soft);
-      font-weight: 300;
-      letter-spacing: 0.06em;
+      font-weight: 400;
+      letter-spacing: 0.02em;
       animation: fadeIn 0.8s ease-out 0.4s both;
       transition: color 0.4s ease;
+      line-height: 1.6;
     }
 
     @keyframes fadeIn {
@@ -226,9 +228,9 @@
     .badge {
       padding: 0.45rem 0.9rem;
       border-radius: 999px;
-      border: 2px solid var(--sakura-pink);
-      background: var(--sakura-bg);
-      color: var(--sakura-pink);
+      border: 2px solid var(--peach-primary);
+      background: var(--peach-light);
+      color: var(--peach-primary);
       text-transform: uppercase;
       letter-spacing: 0.12em;
       font-weight: 500;
@@ -257,6 +259,7 @@
 
     .badge:active {
       transform: scale(0.95);
+      background: var(--peach-medium);
     }
 
     .disclaimer {
@@ -264,8 +267,8 @@
       color: var(--text-soft);
       margin-bottom: 1.5rem;
       padding: 1.2rem 1.3rem;
-      border-left: 4px solid var(--matcha-green);
-      background: linear-gradient(135deg, var(--matcha-bg) 0%, transparent 100%);
+      border-left: 4px solid var(--matcha-primary);
+      background: linear-gradient(135deg, var(--matcha-light) 0%, transparent 100%);
       border-radius: 0 16px 16px 0;
       line-height: 1.75;
       position: relative;
@@ -303,6 +306,9 @@
       }
       h1 {
         font-size: 2.4rem;
+      }
+      .subtitle {
+        font-size: 1.15rem;
       }
       .theme-toggle {
         top: 2rem;
@@ -345,7 +351,7 @@
       right: 0;
       width: 50px;
       height: 50px;
-      background: linear-gradient(135deg, transparent 50%, var(--sakura-light) 50%);
+      background: linear-gradient(135deg, transparent 50%, var(--peach-light) 50%);
       border-radius: 0 var(--card-radius) 0 100%;
       opacity: 0.7;
       transition: all 0.5s ease;
@@ -354,7 +360,7 @@
     #chat-card {
       background: linear-gradient(160deg, 
         var(--cream) 0%, 
-        var(--sakura-bg) 100%);
+        var(--peach-light) 100%);
     }
 
     #chat-box {
@@ -368,16 +374,16 @@
       width: 4px;
     }
     #chat-box::-webkit-scrollbar-track {
-      background: var(--sakura-light);
+      background: var(--peach-light);
       border-radius: 999px;
     }
     #chat-box::-webkit-scrollbar-thumb {
-      background: var(--sakura-pink);
+      background: var(--peach-primary);
       border-radius: 999px;
       transition: all 0.3s ease;
     }
     #chat-box::-webkit-scrollbar-thumb:hover {
-      background: var(--matcha-green);
+      background: var(--matcha-primary);
     }
 
     .msg {
@@ -419,15 +425,15 @@
     }
 
     .bubble-user {
-      background: linear-gradient(135deg, var(--matcha-bg) 0%, var(--matcha-light) 100%);
-      border-color: var(--matcha-green);
+      background: linear-gradient(135deg, var(--matcha-light) 0%, var(--matcha-medium) 100%);
+      border-color: var(--matcha-primary);
       border-bottom-right-radius: 4px;
       color: var(--text-main);
     }
 
     .bubble-bot {
-      background: linear-gradient(135deg, var(--sakura-bg) 0%, var(--sakura-light) 100%);
-      border-color: var(--sakura-pink);
+      background: linear-gradient(135deg, var(--peach-light) 0%, var(--peach-medium) 100%);
+      border-color: var(--peach-primary);
       border-bottom-left-radius: 4px;
       color: var(--text-main);
     }
@@ -441,7 +447,7 @@
       height: 0;
       border-style: solid;
       border-width: 0 0 16px 10px;
-      border-color: transparent transparent var(--matcha-green) transparent;
+      border-color: transparent transparent var(--matcha-primary) transparent;
     }
 
     .bubble-bot::after {
@@ -453,7 +459,7 @@
       height: 0;
       border-style: solid;
       border-width: 0 10px 16px 0;
-      border-color: transparent var(--sakura-pink) transparent transparent;
+      border-color: transparent var(--peach-primary) transparent transparent;
     }
 
     .panel-title {
@@ -461,10 +467,10 @@
       font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 0.18em;
-      color: var(--sakura-pink);
+      color: var(--peach-primary);
       margin-bottom: 0.9rem;
       padding-bottom: 0.6rem;
-      border-bottom: 2px solid var(--sakura-light);
+      border-bottom: 2px solid var(--peach-light);
       font-weight: 500;
       position: relative;
       transition: all 0.4s ease;
@@ -491,8 +497,8 @@
       width: 100%;
       padding: 0.7rem 1.1rem;
       border-radius: 999px;
-      border: 2px solid var(--matcha-green);
-      background: var(--matcha-bg);
+      border: 2px solid var(--matcha-primary);
+      background: var(--matcha-light);
       outline: none;
       color: var(--text-main);
       cursor: pointer;
@@ -506,8 +512,8 @@
     }
 
     select:focus {
-      border-color: var(--matcha-green);
-      box-shadow: 0 0 0 3px rgba(136, 201, 161, 0.2);
+      border-color: var(--matcha-primary);
+      box-shadow: 0 0 0 3px rgba(168, 191, 163, 0.2);
     }
 
     textarea {
@@ -517,8 +523,8 @@
       margin-top: 0.5rem;
       padding: 1rem 1.1rem;
       border-radius: 16px;
-      border: 2px solid var(--sakura-pink);
-      background: var(--sakura-bg);
+      border: 2px solid var(--peach-primary);
+      background: var(--peach-light);
       outline: none;
       line-height: 1.75;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -526,8 +532,8 @@
     }
 
     textarea:focus {
-      border-color: var(--sakura-pink);
-      box-shadow: 0 0 0 3px rgba(255, 179, 193, 0.2);
+      border-color: var(--peach-primary);
+      box-shadow: 0 0 0 3px rgba(255, 181, 154, 0.2);
     }
 
     textarea::placeholder {
@@ -571,17 +577,21 @@
       border: none;
       border-radius: 999px;
       padding: 0.8rem 2rem;
-      background: linear-gradient(135deg, var(--sakura-pink) 0%, #ff99ad 100%);
+      background: linear-gradient(135deg, var(--peach-primary) 0%, #ff9d7f 100%);
       color: #ffffff;
       cursor: pointer;
       font-weight: 600;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      box-shadow: 0 4px 16px rgba(255, 179, 193, 0.35);
+      box-shadow: 0 4px 16px rgba(255, 181, 154, 0.35);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
       touch-action: manipulation;
+    }
+
+    [data-theme="dark"] button {
+      background: linear-gradient(135deg, var(--peach-primary) 0%, #b8745f 100%);
     }
 
     button::before {
@@ -603,9 +613,9 @@
     }
 
     button:active:not(:disabled) {
-      background: linear-gradient(135deg, var(--matcha-green) 0%, #75b594 100%);
+      background: linear-gradient(135deg, var(--matcha-primary) 0%, #95ac91 100%);
       transform: scale(0.96);
-      box-shadow: 0 3px 12px rgba(136, 201, 161, 0.3);
+      box-shadow: 0 3px 12px rgba(168, 191, 163, 0.3);
     }
 
     button:disabled {
@@ -661,7 +671,7 @@
     footer::before {
       content: '◇';
       margin: 0 0.7rem;
-      color: var(--sakura-pink);
+      color: var(--peach-primary);
       display: inline-block;
       animation: symbolRotate 4s ease-in-out infinite;
     }
@@ -669,7 +679,7 @@
     footer::after {
       content: '◇';
       margin: 0 0.7rem;
-      color: var(--matcha-green);
+      color: var(--matcha-primary);
       display: inline-block;
       animation: symbolRotate 4s ease-in-out infinite reverse;
     }
@@ -689,7 +699,7 @@
     }
 
     .footer-author:active {
-      color: var(--sakura-pink);
+      color: var(--peach-primary);
       opacity: 1;
     }
   </style>
