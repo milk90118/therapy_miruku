@@ -5,6 +5,7 @@ const chatBox = document.getElementById("chat-box");
 const inputEl = document.getElementById("input");
 const modeEl = document.getElementById("mode");
 const sendBtn = document.getElementById("send-btn");
+const clearBtn = document.getElementById("clear-btn");   // ⬅ 新增
 const statusText = document.getElementById("status-text");
 const modeHintEl = document.getElementById("mode-hint");
 
@@ -41,6 +42,24 @@ if (modeEl) {
   });
   // 初始套一次
   updateModeUI(modeEl.value);
+}
+
+// 清除對話 → 開一個新的 session 感覺
+if (clearBtn) {
+  clearBtn.addEventListener("click", () => {
+    if (!confirm("確定要清除這一段對話，重新開始嗎？")) return;
+
+    messages = [];
+    saveMessages();
+    renderAllMessages();
+
+    if (statusText) {
+      statusText.textContent = "已開始新的對話 🌱";
+      setTimeout(() => {
+        statusText.textContent = "";
+      }, 1500);
+    }
+  });
 }
 
 // =========================
