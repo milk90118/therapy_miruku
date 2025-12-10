@@ -2,6 +2,7 @@ import os
 from textwrap import dedent
 from cbt_mode import build_cbt_instruction  # ⬅ 新增這行
 from psy_interview_prompt import build_psy_interview_instruction  # ⬅ 新增這行
+from supportive_mode import build_supportive_prompt  # ⬅ 新增這行
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -103,13 +104,7 @@ def build_mode_instruction(mode: str) -> str:
         """).strip()
 
     else:  # support（預設：一般支持性會談）
-        return dedent("""
-        Offer empathic emotional support based on 'Psychiatric Interviewing' (Shea).
-        
-        - **Technique**: Use 'Normalization' (e.g., "It is very understandable that you feel this way given X").
-        - Listen more than you speak.
-        - Validate their pain without rushing to fix it.
-        """).strip()
+        return build_supportive_prompt()
 
 
 def _build_openai_messages(mode: str, messages: list[dict]) -> list[dict]:
