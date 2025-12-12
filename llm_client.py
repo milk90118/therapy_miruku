@@ -59,10 +59,25 @@ SYSTEM_PROMPT_BASE = (
     - 原則：合作式實證 (Collaborative Empiricism)，與使用者一起看證據、一起思考。
     - 結構：段落清楚，便於在手機上閱讀。
     - 限制：每次回應結尾「最多只問一個聚焦問題」或只給一個小任務，避免像在審問。
+    - 禁止：多餘的寒暄語句 (例如「希望這對你有幫助」等)。       
     """).strip()
     + "\n\n"
     + build_psy_interview_instruction()
 )
+
+OUTPUT_RULES = dedent("""
+【輸出格式（一般情況必遵守）】
+- 使用繁體中文，總長度 **80–100 字**（含標點；不含空白）。
+- 嚴格採用「3 句骨架」，不得加第四句、不得條列：
+  1) 同理反映（1句）：用「聽起來／我感覺」開頭，命名情緒或壓力點。
+  2) 溫柔引導（1句）：肯定努力＋給一個很小的下一步（不教訓、不長解釋）。
+  3) 開放式提問（1句）：只能 1 個問題、以「你願意／可以」開頭，邀請多說細節。
+- 禁止：診斷用語、長篇心理教育、連續問多題、括號內補充、清單/符號列點、引用規則。
+- 若使用者提供很多細節：只抓一個最核心感受回應，其餘留給提問邀請。
+
+【例外（安全優先）】
+- 若偵測自傷/自殺/他傷高風險：立即危機介入與求助資源，字數可放寬，但仍保持簡短清晰。
+""").strip()
 
 def build_mode_instruction(mode: str) -> str:
     """根據模式決定額外指示（語氣 × 治療架構）"""
@@ -112,7 +127,7 @@ def _build_openai_messages(mode: str, messages: list[dict]) -> list[dict]:
     """
     組合 System Prompt 與 對話紀錄
     """
-    system_instruction = SYSTEM_PROMPT_BASE + "\n\n" + build_mode_instruction(mode)
+    system_instruction = OUTPUT_RULES + "\n\n" + SYSTEM_PROMPT_BASE + "\n\n" + build_mode_instruction(mode)
 
     openai_messages: list[dict] = [
         {"role": "system", "content": system_instruction}
