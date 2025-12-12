@@ -27,7 +27,8 @@ def _get_api_key() -> str:
 
 client = OpenAI(api_key=_get_api_key())
 
-DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
+# ✅ Fixed: gpt-4.1-mini → gpt-4o-mini (correct model name)
+DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
 
 def get_model_name(mode: str) -> str:
@@ -66,7 +67,7 @@ SYSTEM_PROMPT_BASE = (
     + build_psy_interview_instruction()
 )
 
-# ✅ Step 1: 治療師短回覆鎖
+# ✅ 治療師短回覆鎖
 OUTPUT_RULES = dedent("""
 【治療師短回覆規則（一般情況必遵守）】
 - 繁體中文；單段落；總長度 80–100 字（不含空白、含標點）。
@@ -112,13 +113,16 @@ def build_mode_instruction(mode: str) -> str:
     return build_supportive_prompt()
 
 
-# ✅ Step 2: OUTPUT_RULES 放在 mode 指令之前
 def _build_instructions(mode: str) -> str:
     return SYSTEM_PROMPT_BASE + "\n\n" + build_mode_instruction(mode) + "\n\n" + OUTPUT_RULES
 
 
-def _build_input_messages(messages: list[dict]) -> list[dict]:
-    out: list[dict] = []
+def _build_input_messages(system_prompt: str, messages: list[dict]) -> list[dict]:
+    """
+    ✅ Fixed: Build proper OpenAI message format with system prompt
+    """
+    out: list[dict] = [{"role": "system", "content": system_prompt}]
+    
     for m in messages:
         role = m.get("role", "user")
         content = (m.get("content") or "").strip()
@@ -130,12 +134,12 @@ def _build_input_messages(messages: list[dict]) -> list[dict]:
     return out
 
 
-# ✅ Step 5: 指數退避重試（精簡版）
 def _retry_with_backoff(callable_fn, max_retries: int = 3):
+    """Exponential backoff retry wrapper"""
     for attempt in range(max_retries + 1):
         try:
             return callable_fn()
-        except Exception:
+        except Exception as e:
             if attempt >= max_retries:
                 raise
             sleep_s = (0.6 * (2 ** attempt)) + random.uniform(0, 0.4)
@@ -146,34 +150,37 @@ def generate_reply(
     mode: str,
     messages: list[dict],
     *,
-    previous_response_id: str | None = None,
+    previous_response_id: str | None = None,  # kept for API compatibility, not used
 ) -> tuple[str, str | None]:
+    """
+    ✅ Fixed: Use correct OpenAI chat.completions.create() API
+    """
     instructions = _build_instructions(mode)
-    input_messages = _build_input_messages(messages)
+    input_messages = _build_input_messages(instructions, messages)
     model_name = get_model_name(mode)
 
     try:
-        resp_kwargs: dict[str, Any] = dict(
-            model=model_name,
-            instructions=instructions,
-            input=input_messages,
-            # ✅ Step 3: 硬上限，穩住 80–100 字輸出（可依實測微調）
-            max_output_tokens=170,  # max_output_tokens 是 Responses API 的輸出上限
-            # ✅ Step 4: 心理內容預設不存（可自行改 True）
-            store=False,
-        )
+        def make_request():
+            return client.chat.completions.create(
+                model=model_name,
+                messages=input_messages,
+                max_tokens=200,  # ✅ Fixed: correct param name, slightly higher for safety
+                temperature=0.7,  # ✅ Added: appropriate for therapy context
+            )
 
-        # previous_response_id 可串接狀態；且 instructions 不會自動繼承，所以你每次重送是正確的
-        if previous_response_id:
-            resp_kwargs["previous_response_id"] = previous_response_id
+        response = _retry_with_backoff(make_request)
 
-        response = _retry_with_backoff(lambda: client.responses.create(**resp_kwargs))
-
-        reply_text = (response.output_text or "").strip()
+        # ✅ Fixed: correct way to extract response text
+        reply_text = ""
+        if response.choices and len(response.choices) > 0:
+            reply_text = (response.choices[0].message.content or "").strip()
+        
         if not reply_text:
             reply_text = "（系統繁忙，請稍後再試。）"
 
-        return reply_text, getattr(response, "id", None)
+        # Return response ID for potential future use
+        response_id = getattr(response, "id", None)
+        return reply_text, response_id
 
     except Exception as e:
         return f"連線發生錯誤：{e}\n請檢查網路或 API Key 設定。", None
