@@ -13,13 +13,18 @@ def create_app():
         data = request.get_json(force=True)
         mode = data.get("mode", "support")
         messages = data.get("messages", [])
+        prev_id = data.get("previous_response_id")  # 可選：前端有傳再用
 
-        # 呼叫你封裝好的 LLM
-        reply = generate_reply(mode=mode, messages=messages)
+        reply_text, response_id = generate_reply(
+            mode=mode,
+            messages=messages,
+            previous_response_id=prev_id,
+        )
 
-        return jsonify({"reply": reply})
-
-    return app
+        return jsonify({
+            "reply": reply_text,
+            "response_id": response_id,  # 可選：前端要存就拿這個
+        })
 
 
 app = create_app()

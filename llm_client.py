@@ -1,4 +1,6 @@
 import os
+import time
+import random
 from textwrap import dedent
 from typing import Any
 
@@ -29,7 +31,6 @@ DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
 
 
 def get_model_name(mode: str) -> str:
-    # 需要時可做 mode -> model mapping
     return os.getenv("OPENAI_MODEL", DEFAULT_MODEL)
 
 
@@ -65,6 +66,19 @@ SYSTEM_PROMPT_BASE = (
     + build_psy_interview_instruction()
 )
 
+# ✅ Step 1: 治療師短回覆鎖
+OUTPUT_RULES = dedent("""
+【治療師短回覆規則（一般情況必遵守）】
+- 繁體中文；單段落；總長度 80–100 字（不含空白、含標點）。
+- 嚴格 3 句（不得加第 4 句、不得條列）：
+  1) 反映：用「聽起來／我感覺」抓住一個核心情緒或衝突。
+  2) 聚焦：用一句話縮小到「此刻最關鍵的一點」（可給一個很小的下一步，但不說教、不解釋原理）。
+  3) 開放式問句：只問 1 題、用「你願意／可以」開頭，邀請多說具體細節。
+- 禁止：長篇心理教育、連問多題、診斷語氣、括號補充、清單符號、寒暄開場（你好/很高興你來這裡…）。
+【例外】
+- 若出現自傷/自殺/他傷高風險：優先危機介入與求助資源，可不受字數限制，但仍保持簡短清楚。
+""").strip()
+
 
 def build_mode_instruction(mode: str) -> str:
     if mode == "cbt":
@@ -95,18 +109,15 @@ def build_mode_instruction(mode: str) -> str:
         Structure: 1) Definition 2) Mechanism 3) What helps
         """).strip()
 
-    # default: support
     return build_supportive_prompt()
 
 
+# ✅ Step 2: OUTPUT_RULES 放在 mode 指令之前
 def _build_instructions(mode: str) -> str:
-    return SYSTEM_PROMPT_BASE + "\n\n" + build_mode_instruction(mode)
+    return SYSTEM_PROMPT_BASE + "\n\n" + build_mode_instruction(mode) + "\n\n" + OUTPUT_RULES
 
 
 def _build_input_messages(messages: list[dict]) -> list[dict]:
-    """
-    Responses API 的 input：建議只放 user/assistant
-    """
     out: list[dict] = []
     for m in messages:
         role = m.get("role", "user")
@@ -119,16 +130,24 @@ def _build_input_messages(messages: list[dict]) -> list[dict]:
     return out
 
 
+# ✅ Step 5: 指數退避重試（精簡版）
+def _retry_with_backoff(callable_fn, max_retries: int = 3):
+    for attempt in range(max_retries + 1):
+        try:
+            return callable_fn()
+        except Exception:
+            if attempt >= max_retries:
+                raise
+            sleep_s = (0.6 * (2 ** attempt)) + random.uniform(0, 0.4)
+            time.sleep(sleep_s)
+
+
 def generate_reply(
     mode: str,
     messages: list[dict],
     *,
     previous_response_id: str | None = None,
 ) -> tuple[str, str | None]:
-    """
-    回傳 (reply_text, response_id)
-    - 如果你想省 token：下一輪把 response_id 丟回 previous_response_id
-    """
     instructions = _build_instructions(mode)
     input_messages = _build_input_messages(messages)
     model_name = get_model_name(mode)
@@ -136,13 +155,19 @@ def generate_reply(
     try:
         resp_kwargs: dict[str, Any] = dict(
             model=model_name,
-            instructions=instructions,   # ✅ system prompt 放這裡
-            input=input_messages,        # ✅ 只放 user/assistant
+            instructions=instructions,
+            input=input_messages,
+            # ✅ Step 3: 硬上限，穩住 80–100 字輸出（可依實測微調）
+            max_output_tokens=170,  # max_output_tokens 是 Responses API 的輸出上限
+            # ✅ Step 4: 心理內容預設不存（可自行改 True）
+            store=False,
         )
+
+        # previous_response_id 可串接狀態；且 instructions 不會自動繼承，所以你每次重送是正確的
         if previous_response_id:
             resp_kwargs["previous_response_id"] = previous_response_id
 
-        response = client.responses.create(**resp_kwargs)
+        response = _retry_with_backoff(lambda: client.responses.create(**resp_kwargs))
 
         reply_text = (response.output_text or "").strip()
         if not reply_text:
