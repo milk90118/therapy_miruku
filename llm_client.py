@@ -1,15 +1,21 @@
+"""
+心理治療小助手 - LLM Client
+Production Version (修正完成)
+"""
 import os
 from textwrap import dedent
-from cbt_mode import build_cbt_instruction  # ⬅ 新增這行
-from psy_interview_prompt import build_psy_interview_instruction  # ⬅ 新增這行
-from supportive_mode import build_supportive_prompt  # ⬅ 新增這行
+
+from cbt_mode import build_cbt_instruction
+from psy_interview_prompt import build_psy_interview_instruction
+from supportive_mode import build_supportive_prompt
 from dotenv import load_dotenv
 from openai import OpenAI
 
-# ① 優先讀系統環境變數（給 Render 用）
+# =====================
+# API Key 載入
+# =====================
 api_key = os.getenv("OPENAI_API_KEY")
 
-# ② 本機如果沒有，再讀 .env
 if not api_key:
     load_dotenv()
     api_key = os.getenv("OPENAI_API_KEY")
@@ -19,23 +25,35 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 
-# 預設模型
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
+# 預設模型（已修正）
+DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
 
 def get_model_name(mode: str) -> str:
-    """
-    未來如果想讓不同模式用不同模型，可以在這裡集中管理。
-    """
-    base_model = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
-    return base_model
+    """依模式取得模型名稱"""
+    return os.getenv("OPENAI_MODEL", DEFAULT_MODEL)
 
 
 # ==========================================
-# 核心系統提示詞 (The Brain & Safety Guard)
+# 核心系統提示詞
 # ==========================================
+
+# 短回覆規則（放最前面，權重最高）
+OUTPUT_RULES = dedent("""
+    【治療師短回覆規則 - 最高優先】
+    - 繁體中文，80-120字，單段落
+    - 嚴格 3 句：
+      1) 反映：「聽起來／我感覺…」抓住核心情緒
+      2) 聚焦：縮小到此刻最關鍵的一點
+      3) 開放式問句：只問 1 題
+    - 禁止：條列、多問、說教、寒暄開場
+    - 例外：危機情況可不受字數限制
+""").strip()
+
 SYSTEM_PROMPT_BASE = (
-    dedent("""
+    OUTPUT_RULES
+    + "\n\n"
+    + dedent("""
     你是一位溫柔、專業、具備實證思維的心理支持助手。
 
     【核心運作邏輯：隱性思維鏈】
@@ -57,21 +75,19 @@ SYSTEM_PROMPT_BASE = (
     - 語氣：溫暖 × 穩定 × 清晰，像是一位坐在旁邊的資深治療師。
     - 原則：合作式實證 (Collaborative Empiricism)，與使用者一起看證據、一起思考。
     - 結構：段落清楚，便於在手機上閱讀。
-    - 限制：每次回應結尾「最多只問一個聚焦問題」或只給一個小任務，避免像在審問。
     """).strip()
     + "\n\n"
     + build_psy_interview_instruction()
 )
 
+
 def build_mode_instruction(mode: str) -> str:
     """根據模式決定額外指示（語氣 × 治療架構）"""
 
     if mode == "cbt":
-        # CBT 模式指令獨立在 cbt_mode.py
         return build_cbt_instruction()
 
     elif mode == "act":
-        # ACT：接納與承諾 (Acceptance & Commitment)
         return dedent("""
         Act as an ACT (Acceptance and Commitment Therapy) companion.
         Focus on: Defusion (脫鉤), Acceptance (接納), and Values (價值).
@@ -83,7 +99,6 @@ def build_mode_instruction(mode: str) -> str:
         """).strip()
 
     elif mode == "grounding":
-        # Grounding：著地練習 (適合恐慌/解離)
         return dedent("""
         Act as a grounding assistant. Your goal is to bring the user back to the 'Here and Now'.
         
@@ -94,7 +109,6 @@ def build_mode_instruction(mode: str) -> str:
         """).strip()
 
     elif mode == "education":
-        # 心理教育 (Psychoeducation)
         return dedent("""
         Provide psychoeducation in clear, layman terms.
         
@@ -108,9 +122,7 @@ def build_mode_instruction(mode: str) -> str:
 
 
 def _build_openai_messages(mode: str, messages: list[dict]) -> list[dict]:
-    """
-    組合 System Prompt 與 對話紀錄
-    """
+    """組合 System Prompt 與對話紀錄"""
     system_instruction = SYSTEM_PROMPT_BASE + "\n\n" + build_mode_instruction(mode)
 
     openai_messages: list[dict] = [
@@ -122,46 +134,42 @@ def _build_openai_messages(mode: str, messages: list[dict]) -> list[dict]:
         content = m.get("content", "")
         if not content:
             continue
-        # 確保 role 只有 user 或 assistant
         if role not in ("user", "assistant"):
             role = "user"
-        openai_messages.append(
-            {"role": role, "content": content}
-        )
+        openai_messages.append({"role": role, "content": content})
 
     return openai_messages
 
 
 def generate_reply(mode: str, messages: list[dict]) -> str:
-    """
-    主函式：呼叫 OpenAI API
-    """
+    """主函式：呼叫 OpenAI API"""
     try:
         openai_messages = _build_openai_messages(mode, messages)
         model_name = get_model_name(mode)
 
-        # 注意：此處保留您原本的 client.responses.create 用法
-        # 若未來使用標準 OpenAI SDK (v1.0+)，請改為 client.chat.completions.create
-        response = client.responses.create(
+        # 正確的 OpenAI Chat Completions API
+        response = client.chat.completions.create(
             model=model_name,
-            input=openai_messages,
+            messages=openai_messages,
+            max_tokens=250,
+            temperature=0.7,
         )
 
-        # 嘗試解析回傳 (相容性處理)
-        if hasattr(response, "output_text") and response.output_text:
-            reply_text = response.output_text
-        else:
-            try:
-                # 針對新版 API 常見的回傳結構
-                reply_text = response.output[0].content[0].text.value
-            except Exception:
-                # 若結構再次變動，嘗試從 chat completion 結構讀取
-                try:
-                    reply_text = response.choices[0].message.content
-                except:
-                    reply_text = "（系統繁忙，請稍後再試。）"
-
+        # 解析回應
+        reply_text = response.choices[0].message.content
+        
+        if not reply_text:
+            return "（系統繁忙，請稍後再試。）"
+        
         return reply_text.strip()
 
     except Exception as e:
-        return f"連線發生錯誤：{e}\n請檢查網路或 API Key 設定。"
+        error_msg = str(e).lower()
+        if "api_key" in error_msg or "authentication" in error_msg:
+            return "API 設定有誤，請聯繫開發者。"
+        elif "rate_limit" in error_msg:
+            return "目前使用人數較多，請稍後再試 🙏"
+        elif "model" in error_msg:
+            return "模型設定有誤，請聯繫開發者。"
+        else:
+            return f"連線發生錯誤，請稍後再試。\n（錯誤訊息：{e}）"
