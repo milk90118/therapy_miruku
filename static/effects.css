@@ -1,8 +1,6 @@
 /* =========================================
-   全站動畫 & 裝飾效果
-   日系雜誌風格優化版
-   
-   🌸 櫻花動畫已移至 sakura.js (SVG + 3D Physics)
+   全站動畫 & 裝飾效果（櫻花 / 星星 / 方塊）
+   日系雜誌風格優化版 - SVG 真實櫻花花瓣
    ========================================= */
 
 /* ---------- 櫻花 & 星星 顯示邏輯 ---------- */
@@ -25,7 +23,7 @@
   display: block;
 }
 
-/* ---------- 櫻花容器 (配合 sakura.js) ---------- */
+/* ---------- 櫻花容器 ---------- */
 
 .sakura-container {
   position: fixed;
@@ -36,17 +34,54 @@
   pointer-events: none;
   overflow: hidden;
   z-index: 0;
-  /* 3D 透視效果 */
-  perspective: 1000px;
-  perspective-origin: 50% 30%;
 }
 
-/* JS 生成的花瓣基礎樣式 */
-.sakura-petal {
+/* 暫停動畫 */
+.sakura-container.paused .sakura {
+  animation-play-state: paused;
+}
+
+/* ---------- 單片櫻花 (SVG 版本) ---------- */
+
+.sakura {
   position: absolute;
-  pointer-events: none;
-  transform-style: preserve-3d;
+  opacity: 0;
+  animation: sakuraFall 14s infinite ease-in-out;
   will-change: transform, opacity;
+}
+
+/* SVG 內的樣式 */
+.sakura svg {
+  display: block;
+}
+
+/* ---------- 櫻花落下動畫 - 保留原始動畫 ---------- */
+
+@keyframes sakuraFall {
+  0% {
+    transform: translateY(-10%) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.85;
+  }
+  25% {
+    transform: translateY(25vh) translateX(15px) rotate(90deg);
+  }
+  50% {
+    transform: translateY(50vh) translateX(-10px) rotate(180deg);
+    opacity: 0.75;
+  }
+  75% {
+    transform: translateY(75vh) translateX(25px) rotate(270deg);
+  }
+  92% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(110vh) translateX(45px) rotate(360deg);
+    opacity: 0;
+  }
 }
 
 /* ---------- 星星容器 ---------- */
@@ -522,10 +557,6 @@ body::after {
   
   body::before,
   body::after {
-    animation: none !important;
-  }
-  
-  .sakura-petal {
     animation: none !important;
   }
 }

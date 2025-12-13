@@ -186,7 +186,7 @@ function updateModeUI(mode) {
 }
 
 // =========================
-// 主題切換（日 / 夜）+ 櫻花控制
+// 主題切換（日 / 夜）
 // =========================
 (function initTheme() {
   if (!themeToggle || !themeIcon) return;
@@ -202,72 +202,51 @@ function updateModeUI(mode) {
     html.setAttribute("data-theme", newTheme);
     localStorage.setItem("theme", newTheme);
     themeIcon.textContent = newTheme === "dark" ? "☀️" : "🌙";
-
-    // 🌸 控制櫻花動畫
-    if (sakuraAnimation) {
-      if (newTheme === "dark") {
-        sakuraAnimation.pause();
-      } else {
-        sakuraAnimation.resume();
-      }
-    }
   });
 })();
 
 // =========================
-// 🌸 櫻花初始化 (SVG + 3D Physics)
+// 🌸 櫻花初始化 (SVG 花瓣 + CSS 動畫)
 // =========================
 function initSakuraAnimation() {
   const sakuraContainer = document.querySelector(".sakura-container");
-  if (!sakuraContainer || typeof SakuraPetal === "undefined") {
-    console.warn("Sakura animation not available");
-    return;
-  }
-
-  // 初始化新的 SVG 櫻花系統 - 緩緩飄落版本
-  sakuraAnimation = new SakuraPetal(sakuraContainer, {
-    // 生成設定
-    spawnRate: 500,          // 花瓣生成間隔 (ms) - 更稀疏
-    maxPetals: 25,           // 最大花瓣數量 - 適量
-    baseSize: 16,            // 基礎大小 (px)
-    sizeVariation: 0.6,      // 大小變化範圍
-    
-    // 🌸 緩慢飄落的物理效果
-    fallSpeed: { min: 12, max: 28 },       // 非常慢的下落
-    swayAmplitude: { min: 50, max: 120 },  // 大幅度左右搖擺
-    swayFrequency: { min: 0.2, max: 0.5 }, // 慢速搖擺週期
-    
-    // 🌸 優雅的旋轉
-    rotationSpeed: { min: 5, max: 18 },    // 緩慢旋轉
-    tumbleSpeed: { min: 8, max: 22 },      // 緩慢翻轉
-    
-    // 🌸 空氣動力學
-    airResistance: 0.988,                  // 高空氣阻力
-    updraftStrength: 0.5,                  // 上升氣流
-    updraftFrequency: 0.2,                 // 較常出現上升氣流
-    
-    // 風力
-    windStrength: 0.15,                    // 輕柔的風
-    windGustInterval: 8000,                // 更久才來一陣風
-    
-    // 自訂顏色 (日系櫻花色調)
-    colors: [
-      { base: '#ffb7c5', tip: '#ffc9d4', center: '#fff0f3' },
-      { base: '#ffc4cf', tip: '#ffd6dd', center: '#fff5f7' },
-      { base: '#ffaabb', tip: '#ffbfcc', center: '#ffe8ed' },
-      { base: '#ffd0d9', tip: '#ffe0e6', center: '#fffafb' },
-    ]
-  });
-
-  // 如果目前是深色模式，暫停動畫
-  const currentTheme = html.getAttribute("data-theme");
-  if (currentTheme === "dark") {
-    sakuraAnimation.pause();
+  if (!sakuraContainer) return;
+  
+  // 檢查是否有 SakuraPetal class
+  if (typeof SakuraPetal !== "undefined") {
+    // 使用新的 SVG 花瓣生成器
+    sakuraAnimation = new SakuraPetal(sakuraContainer, {
+      count: 35,              // 花瓣數量
+      baseSize: 16,           // 基礎大小
+      sizeVariation: 0.6,     // 大小變化
+      durationMin: 12,        // 最短動畫時間
+      durationMax: 20,        // 最長動畫時間
+      delayMax: 12,           // 最大延遲
+      
+      // 自訂顏色
+      colors: [
+        { base: '#ffb7c5', tip: '#ffc9d4', center: '#fff0f3' },
+        { base: '#ffc4cf', tip: '#ffd6dd', center: '#fff5f7' },
+        { base: '#ffaabb', tip: '#ffbfcc', center: '#ffe8ed' },
+        { base: '#ffd0d9', tip: '#ffe0e6', center: '#fffafb' },
+      ]
+    });
+  } else {
+    // Fallback: 使用原始方式生成 (不含 SVG)
+    console.warn("SakuraPetal not loaded, using fallback");
+    for (let i = 0; i < 35; i++) {
+      const petal = document.createElement("div");
+      petal.className = "sakura";
+      petal.style.left = Math.random() * 100 + "%";
+      petal.style.animationDelay = Math.random() * 12 + "s";
+      petal.style.animationDuration = 12 + Math.random() * 8 + "s";
+      sakuraContainer.appendChild(petal);
+    }
   }
 }
 
 // =========================
-// ⭐ 星星生成 (保留原有 CSS 動畫)
+// ⭐ 星星生成
 // =========================
 function initStars() {
   const starContainer = document.querySelector(".star-container");
@@ -285,26 +264,10 @@ function initStars() {
 }
 
 // =========================
-// 頁面可見性控制 (效能優化)
-// =========================
-document.addEventListener("visibilitychange", () => {
-  if (!sakuraAnimation) return;
-
-  if (document.hidden) {
-    sakuraAnimation.pause();
-  } else {
-    const theme = html.getAttribute("data-theme");
-    if (theme === "light") {
-      sakuraAnimation.resume();
-    }
-  }
-});
-
-// =========================
-// DOMContentLoaded: 初始化所有動畫
+// DOMContentLoaded: 初始化動畫
 // =========================
 document.addEventListener("DOMContentLoaded", () => {
-  // 初始化 SVG 櫻花
+  // 初始化櫻花
   initSakuraAnimation();
   
   // 初始化星星
