@@ -22,18 +22,18 @@
       --peach-light: #ffe8dc;
       --peach-medium: #ffd4c4;
       --peach-primary: #ffb59a;
-      
+
       --matcha-light: #e8f0e6;
       --matcha-medium: #d1e3cd;
       --matcha-primary: #a8bfa3;
-      
+
       --cream: #fffcf5;
       --warm-white: #faf7f2;
-      
+
       --text-main: #2d2d2d;
       --text-soft: #7a7a7a;
       --border: #e8d5d0;
-      
+
       --card-radius: 20px;
       --shadow-light: 0 4px 16px rgba(255, 181, 154, 0.15);
       --shadow-hover: 0 8px 24px rgba(168, 191, 163, 0.2);
@@ -44,18 +44,18 @@
       --peach-light: #4a3a34;
       --peach-medium: #5c4a42;
       --peach-primary: #d4a894;
-      
+
       --matcha-light: #344038;
       --matcha-medium: #3f4d43;
       --matcha-primary: #8fae9d;
-      
+
       --cream: #2d2a27;
       --warm-white: #38342f;
-      
+
       --text-main: #e8dfd6;
       --text-soft: #b5a99e;
       --border: #524a44;
-      
+
       --shadow-light: 0 6px 20px rgba(0, 0, 0, 0.4);
       --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
@@ -69,7 +69,7 @@
       max-width: 960px;
       margin: 0 auto;
       padding: 1.5rem 1rem 4rem;
-      background: 
+      background:
         radial-gradient(circle at 15% 15%, var(--peach-light) 0%, transparent 45%),
         radial-gradient(circle at 85% 85%, var(--matcha-light) 0%, transparent 45%),
         linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%);
@@ -268,7 +268,7 @@
     /* 對話窗特殊樣式 - 更強的層次感 */
     #chat-card {
       background: linear-gradient(160deg, var(--cream) 0%, var(--peach-light) 100%);
-      box-shadow: 
+      box-shadow:
         var(--shadow-light),
         0 0 0 1px rgba(255, 181, 154, 0.1),
         inset 0 1px 2px rgba(255, 255, 255, 0.3);
@@ -276,7 +276,7 @@
 
     [data-theme="dark"] #chat-card {
       background: linear-gradient(160deg, var(--cream) 0%, var(--peach-light) 100%);
-      box-shadow: 
+      box-shadow:
         0 8px 28px rgba(0, 0, 0, 0.5),
         0 0 0 1px rgba(212, 168, 148, 0.15),
         inset 0 1px 2px rgba(255, 255, 255, 0.05);
@@ -623,7 +623,7 @@
     <p class="subtitle">你值得被好好照顧與被傾聽。</p>
     <div class="badge-row">
       <span class="badge">Therapy Notes</span>
-      <span class="badge">CBT & Emotional Support</span>
+      <span class="badge">CBT / Support / Analytic</span>
       <span class="badge">Slow Pace / Soft Tone</span>
     </div>
   </header>
@@ -659,9 +659,7 @@
       <select id="mode">
         <option value="support">🌿 溫柔陪伴 Support</option>
         <option value="cbt">🧩 思考紀錄 CBT</option>
-        <option value="act">🎯 接納練習 ACT</option>
-        <option value="grounding">🌊 身體覺察 Grounding</option>
-        <option value="education">📚 心理教育 Education</option>
+        <option value="分析性">🕊️ 分析性 Analytic</option>
       </select>
 
       <label for="input">訊息 Message</label>

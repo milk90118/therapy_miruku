@@ -5,7 +5,7 @@ const chatBox = document.getElementById("chat-box");
 const inputEl = document.getElementById("input");
 const modeEl = document.getElementById("mode");
 const sendBtn = document.getElementById("send-btn");
-const clearBtn = document.getElementById("clear-btn");   // ⬅ 新增
+const clearBtn = document.getElementById("clear-btn");
 const statusText = document.getElementById("status-text");
 const modeHintEl = document.getElementById("mode-hint");
 
@@ -20,11 +20,9 @@ let messages = loadMessages();
 renderAllMessages();
 
 // =========================
-/* 主事件綁定 */
+// 主事件綁定
 // =========================
-if (sendBtn) {
-  sendBtn.addEventListener("click", handleSend);
-}
+if (sendBtn) sendBtn.addEventListener("click", handleSend);
 
 if (inputEl) {
   inputEl.addEventListener("keydown", (e) => {
@@ -37,11 +35,8 @@ if (inputEl) {
 
 // 模式切換 → 更新 placeholder & hint
 if (modeEl) {
-  modeEl.addEventListener("change", (e) => {
-    updateModeUI(e.target.value);
-  });
-  // 初始套一次
-  updateModeUI(modeEl.value);
+  modeEl.addEventListener("change", (e) => updateModeUI(e.target.value));
+  updateModeUI(modeEl.value); // 初始套一次
 }
 
 // 清除對話 → 開一個新的 session 感覺
@@ -55,9 +50,7 @@ if (clearBtn) {
 
     if (statusText) {
       statusText.textContent = "已開始新的對話 🌱";
-      setTimeout(() => {
-        statusText.textContent = "";
-      }, 1500);
+      setTimeout(() => (statusText.textContent = ""), 1500);
     }
   });
 }
@@ -67,6 +60,7 @@ if (clearBtn) {
 // =========================
 function handleSend() {
   if (!inputEl) return;
+
   const text = inputEl.value.trim();
   if (!text) return;
 
@@ -103,10 +97,7 @@ function callBackend(mode) {
     })
     .catch((err) => {
       console.error(err);
-      const errMsg = {
-        role: "assistant",
-        content: "發生錯誤，稍後再試一次。",
-      };
+      const errMsg = { role: "assistant", content: "發生錯誤，稍後再試一次。" };
       messages.push(errMsg);
       saveMessages();
       appendMessageToUI(errMsg);
@@ -165,37 +156,27 @@ function loadMessages() {
 }
 
 // =========================
-// 模式提示：不同 mode 不同 placeholder/hint
+// 模式提示：三種 mode 專屬 placeholder/hint
 // =========================
 function updateModeUI(mode) {
   if (!inputEl || !modeHintEl) return;
 
   if (mode === "cbt") {
     inputEl.placeholder =
-      "試著寫下：發生了什麼事？在哪裡？跟誰？那一瞬間你腦中跳出的第一個念頭是什麼？";
+      "先寫三件事：①發生了什麼（事件）②當下第一個念頭（想法）③身體/情緒反應（感受）";
     modeHintEl.textContent =
-      "先從『事件』和『當下的想法、感受』開始就很好，不需要寫得完整。";
-  } else if (mode === "act") {
+      "不用完美：只要把『事件—想法—感受』寫出來一點點，我們就能開始整理。";
+  } else if (mode === "分析性" || mode === "analytic" || mode === "psychodynamic") {
     inputEl.placeholder =
-      "可以寫寫：現在讓你最在意的事情是什麼？這件事對你來說，代表了什麼樣的價值？";
+      "可以寫：你最在意的那一段互動/感受是什麼？它像不像過去某種熟悉的模式？";
     modeHintEl.textContent =
-      "我們不急著把情緒變好，只是一起看看：在這些感受背後，你在乎的是什麼。";
-  } else if (mode === "grounding") {
-    inputEl.placeholder =
-      "試著描述：你現在在哪裡？身體貼著的椅子、床或地板感覺如何？周圍看得到、聽得到什麼？";
-    modeHintEl.textContent =
-      "當不知道要說什麼時，也可以只打：『我現在很亂，可以幫我慢慢穩下來嗎？』。";
-  } else if (mode === "education") {
-    inputEl.placeholder =
-      "想了解哪一個主題呢？例如：焦慮、憂鬱、恐慌、CBT、Grounding 練習、壓力調適…";
-    modeHintEl.textContent =
-      "這個模式比較像『心理小講堂』，你可以問任何想理解的心理相關問題。";
+      "我們會慢慢來：先澄清、再探究；若你願意，才會輕輕碰觸更深的『為什麼』。";
   } else {
-    // support 預設
+    // support（溫柔陪伴）
     inputEl.placeholder =
-      "可以隨便寫一小段：今天發生了什麼、卡住的地方、或只是現在的心情。";
+      "可以隨便寫一小段：今天卡住的地方、最重的一種感覺、或只是你想被聽見的那句話。";
     modeHintEl.textContent =
-      "( ˶'ᵕ'🫶)💕 不需要一次寫得很多，只要比剛剛多一點點就好。";
+      "( ˶'ᵕ'🫶)💕 不需要一次寫很多，只要比剛剛多一點點就好。";
   }
 }
 
@@ -226,39 +207,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const sakuraContainer = document.querySelector(".sakura-container");
   const starContainer = document.querySelector(".star-container");
 
-  // 櫻花：增加到 35 片，營造更豐富的春日氛圍
+  // 櫻花
   if (sakuraContainer) {
     for (let i = 0; i < 35; i++) {
       const petal = document.createElement("div");
       petal.className = "sakura";
-      
-      // 隨機分佈於螢幕寬度
       petal.style.left = Math.random() * 100 + "%";
-      
-      // 隨機延遲，避免同時出現
       petal.style.animationDelay = Math.random() * 12 + "s";
-      
-      // 隨機持續時間，創造深度感
       petal.style.animationDuration = 12 + Math.random() * 8 + "s";
-      
       sakuraContainer.appendChild(petal);
     }
   }
 
-  // 星星：增加到 40 顆，營造滿天星空
+  // 星星
   if (starContainer) {
     for (let i = 0; i < 40; i++) {
       const star = document.createElement("div");
       star.className = "star";
-      
-      // 隨機分佈於整個螢幕
       star.style.left = Math.random() * 100 + "%";
       star.style.top = Math.random() * 100 + "%";
-      
-      // 隨機延遲與持續時間
       star.style.animationDelay = Math.random() * 4 + "s";
       star.style.animationDuration = 3 + Math.random() * 3 + "s";
-      
       starContainer.appendChild(star);
     }
   }
