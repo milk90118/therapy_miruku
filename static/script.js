@@ -14,6 +14,11 @@ const themeIcon = themeToggle ? themeToggle.querySelector(".theme-icon") : null;
 const html = document.documentElement;
 
 // =========================
+// 🌸 Sakura Animation Instance
+// =========================
+let sakuraAnimation = null;
+
+// =========================
 // LocalStorage：歷史訊息
 // =========================
 let messages = loadMessages();
@@ -181,7 +186,7 @@ function updateModeUI(mode) {
 }
 
 // =========================
-// 主題切換（日 / 夜）
+// 主題切換（日 / 夜）+ 櫻花控制
 // =========================
 (function initTheme() {
   if (!themeToggle || !themeIcon) return;
@@ -197,38 +202,97 @@ function updateModeUI(mode) {
     html.setAttribute("data-theme", newTheme);
     localStorage.setItem("theme", newTheme);
     themeIcon.textContent = newTheme === "dark" ? "☀️" : "🌙";
+
+    // 🌸 控制櫻花動畫
+    if (sakuraAnimation) {
+      if (newTheme === "dark") {
+        sakuraAnimation.pause();
+      } else {
+        sakuraAnimation.resume();
+      }
+    }
   });
 })();
 
 // =========================
-// 櫻花 & 星星自動生成 - 增加數量與層次
+// 🌸 櫻花初始化 (SVG + 3D Physics)
+// =========================
+function initSakuraAnimation() {
+  const sakuraContainer = document.querySelector(".sakura-container");
+  if (!sakuraContainer || typeof SakuraPetal === "undefined") {
+    console.warn("Sakura animation not available");
+    return;
+  }
+
+  // 初始化新的 SVG 櫻花系統
+  sakuraAnimation = new SakuraPetal(sakuraContainer, {
+    spawnRate: 350,          // 花瓣生成間隔 (ms)
+    maxPetals: 30,           // 最大花瓣數量
+    baseSize: 16,            // 基礎大小 (px)
+    sizeVariation: 0.6,      // 大小變化範圍
+    
+    // 物理效果
+    fallSpeed: { min: 35, max: 70 },
+    swayAmplitude: { min: 25, max: 60 },
+    windStrength: 0.25,
+    
+    // 自訂顏色 (日系櫻花色調)
+    colors: [
+      { base: '#ffb7c5', tip: '#ffc9d4', center: '#fff0f3' },
+      { base: '#ffc4cf', tip: '#ffd6dd', center: '#fff5f7' },
+      { base: '#ffaabb', tip: '#ffbfcc', center: '#ffe8ed' },
+      { base: '#ffd0d9', tip: '#ffe0e6', center: '#fffafb' },
+    ]
+  });
+
+  // 如果目前是深色模式，暫停動畫
+  const currentTheme = html.getAttribute("data-theme");
+  if (currentTheme === "dark") {
+    sakuraAnimation.pause();
+  }
+}
+
+// =========================
+// ⭐ 星星生成 (保留原有 CSS 動畫)
+// =========================
+function initStars() {
+  const starContainer = document.querySelector(".star-container");
+  if (!starContainer) return;
+
+  for (let i = 0; i < 40; i++) {
+    const star = document.createElement("div");
+    star.className = "star";
+    star.style.left = Math.random() * 100 + "%";
+    star.style.top = Math.random() * 100 + "%";
+    star.style.animationDelay = Math.random() * 4 + "s";
+    star.style.animationDuration = 3 + Math.random() * 3 + "s";
+    starContainer.appendChild(star);
+  }
+}
+
+// =========================
+// 頁面可見性控制 (效能優化)
+// =========================
+document.addEventListener("visibilitychange", () => {
+  if (!sakuraAnimation) return;
+
+  if (document.hidden) {
+    sakuraAnimation.pause();
+  } else {
+    const theme = html.getAttribute("data-theme");
+    if (theme === "light") {
+      sakuraAnimation.resume();
+    }
+  }
+});
+
+// =========================
+// DOMContentLoaded: 初始化所有動畫
 // =========================
 document.addEventListener("DOMContentLoaded", () => {
-  const sakuraContainer = document.querySelector(".sakura-container");
-  const starContainer = document.querySelector(".star-container");
-
-  // 櫻花
-  if (sakuraContainer) {
-    for (let i = 0; i < 35; i++) {
-      const petal = document.createElement("div");
-      petal.className = "sakura";
-      petal.style.left = Math.random() * 100 + "%";
-      petal.style.animationDelay = Math.random() * 12 + "s";
-      petal.style.animationDuration = 12 + Math.random() * 8 + "s";
-      sakuraContainer.appendChild(petal);
-    }
-  }
-
-  // 星星
-  if (starContainer) {
-    for (let i = 0; i < 40; i++) {
-      const star = document.createElement("div");
-      star.className = "star";
-      star.style.left = Math.random() * 100 + "%";
-      star.style.top = Math.random() * 100 + "%";
-      star.style.animationDelay = Math.random() * 4 + "s";
-      star.style.animationDuration = 3 + Math.random() * 3 + "s";
-      starContainer.appendChild(star);
-    }
-  }
+  // 初始化 SVG 櫻花
+  initSakuraAnimation();
+  
+  // 初始化星星
+  initStars();
 });
