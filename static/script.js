@@ -224,17 +224,31 @@ function initSakuraAnimation() {
     return;
   }
 
-  // 初始化新的 SVG 櫻花系統
+  // 初始化新的 SVG 櫻花系統 - 緩緩飄落版本
   sakuraAnimation = new SakuraPetal(sakuraContainer, {
-    spawnRate: 350,          // 花瓣生成間隔 (ms)
-    maxPetals: 30,           // 最大花瓣數量
+    // 生成設定
+    spawnRate: 500,          // 花瓣生成間隔 (ms) - 更稀疏
+    maxPetals: 25,           // 最大花瓣數量 - 適量
     baseSize: 16,            // 基礎大小 (px)
     sizeVariation: 0.6,      // 大小變化範圍
     
-    // 物理效果
-    fallSpeed: { min: 35, max: 70 },
-    swayAmplitude: { min: 25, max: 60 },
-    windStrength: 0.25,
+    // 🌸 緩慢飄落的物理效果
+    fallSpeed: { min: 12, max: 28 },       // 非常慢的下落
+    swayAmplitude: { min: 50, max: 120 },  // 大幅度左右搖擺
+    swayFrequency: { min: 0.2, max: 0.5 }, // 慢速搖擺週期
+    
+    // 🌸 優雅的旋轉
+    rotationSpeed: { min: 5, max: 18 },    // 緩慢旋轉
+    tumbleSpeed: { min: 8, max: 22 },      // 緩慢翻轉
+    
+    // 🌸 空氣動力學
+    airResistance: 0.988,                  // 高空氣阻力
+    updraftStrength: 0.5,                  // 上升氣流
+    updraftFrequency: 0.2,                 // 較常出現上升氣流
+    
+    // 風力
+    windStrength: 0.15,                    // 輕柔的風
+    windGustInterval: 8000,                // 更久才來一陣風
     
     // 自訂顏色 (日系櫻花色調)
     colors: [

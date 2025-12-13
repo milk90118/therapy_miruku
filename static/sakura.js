@@ -1,13 +1,13 @@
 /**
  * 🌸 Realistic Sakura Petal Animation System
- * Japanese Magazine Style - Professional Grade
+ * Japanese Magazine Style - Gentle Floating Version
  * 
  * Features:
  * - Authentic heart-notched petal shape (SVG)
- * - 3D tumbling physics simulation
- * - Wind turbulence system
- * - Depth layering (foreground/midground/background)
- * - Performance optimized with requestAnimationFrame
+ * - Gentle floating physics with air resistance
+ * - Updraft simulation (偶爾往上飄)
+ * - Multi-layer wind currents
+ * - Slow, graceful tumbling
  */
 
 class SakuraPetal {
@@ -27,21 +27,28 @@ class SakuraPetal {
         { base: '#ffccd5', tip: '#ffdde3', center: '#fff8f9' },
       ],
       
-      // Physics
-      fallSpeed: config.fallSpeed || { min: 40, max: 80 },
-      swayAmplitude: config.swayAmplitude || { min: 30, max: 80 },
-      swayFrequency: config.swayFrequency || { min: 0.5, max: 1.5 },
-      rotationSpeed: config.rotationSpeed || { min: 20, max: 60 },
-      tumbleSpeed: config.tumbleSpeed || { min: 30, max: 90 },
+      // 🌸 Gentle Physics - 緩緩飄落
+      fallSpeed: config.fallSpeed || { min: 15, max: 35 },
+      swayAmplitude: config.swayAmplitude || { min: 40, max: 100 },
+      swayFrequency: config.swayFrequency || { min: 0.3, max: 0.7 },
+      
+      // 🌸 Slow rotation - 優雅翻轉
+      rotationSpeed: config.rotationSpeed || { min: 8, max: 25 },
+      tumbleSpeed: config.tumbleSpeed || { min: 10, max: 30 },
+      
+      // 🌸 Air dynamics - 空氣動力學
+      airResistance: config.airResistance || 0.985,
+      updraftStrength: config.updraftStrength || 0.4,
+      updraftFrequency: config.updraftFrequency || 0.15,
       
       // Wind system
       windEnabled: config.windEnabled !== false,
-      windStrength: config.windStrength || 0.3,
-      windGustInterval: config.windGustInterval || 4000,
+      windStrength: config.windStrength || 0.2,
+      windGustInterval: config.windGustInterval || 6000,
       
       // Spawn settings
-      spawnRate: config.spawnRate || 300,
-      maxPetals: config.maxPetals || 35,
+      spawnRate: config.spawnRate || 400,
+      maxPetals: config.maxPetals || 30,
       
       ...config
     };
@@ -52,6 +59,7 @@ class SakuraPetal {
     this.lastTime = 0;
     this.spawnTimer = 0;
     this.isPaused = false;
+    this.globalTime = 0;
     
     this.init();
   }
@@ -188,16 +196,19 @@ class SakuraPetal {
     const svg = this.createPetalSVG(color, size);
     element.appendChild(svg);
     
+    // 🌸 Enhanced physics properties for gentle floating
     const petal = {
       element,
       size,
       depthLayer,
       
       x: Math.random() * (this.container.offsetWidth + 100) - 50,
-      y: -size * 1.5,
+      y: -size * 2,
       
-      vx: (Math.random() - 0.5) * 20,
-      vy: this.randomRange(cfg.fallSpeed.min, cfg.fallSpeed.max) * (0.6 + 0.4 * depthLayer),
+      vx: (Math.random() - 0.5) * 8,
+      vy: this.randomRange(cfg.fallSpeed.min, cfg.fallSpeed.max) * (0.5 + 0.5 * depthLayer),
+      
+      baseFallSpeed: this.randomRange(cfg.fallSpeed.min, cfg.fallSpeed.max) * (0.5 + 0.5 * depthLayer),
       
       rotateX: Math.random() * 360,
       rotateY: Math.random() * 360,
@@ -207,18 +218,26 @@ class SakuraPetal {
       rotateYSpeed: this.randomRange(cfg.tumbleSpeed.min, cfg.tumbleSpeed.max) * (Math.random() > 0.5 ? 1 : -1),
       rotateZSpeed: this.randomRange(cfg.rotationSpeed.min, cfg.rotationSpeed.max) * (Math.random() > 0.5 ? 1 : -1),
       
-      swayPhase: Math.random() * Math.PI * 2,
+      // 🌸 Multi-wave sway
+      swayPhase1: Math.random() * Math.PI * 2,
+      swayPhase2: Math.random() * Math.PI * 2,
       swayAmplitude: this.randomRange(cfg.swayAmplitude.min, cfg.swayAmplitude.max),
-      swayFrequency: this.randomRange(cfg.swayFrequency.min, cfg.swayFrequency.max),
+      swayFrequency1: this.randomRange(cfg.swayFrequency.min, cfg.swayFrequency.max),
+      swayFrequency2: this.randomRange(cfg.swayFrequency.min * 1.5, cfg.swayFrequency.max * 2),
       
       flutterPhase: Math.random() * Math.PI * 2,
-      flutterSpeed: 2 + Math.random() * 3,
+      flutterSpeed: 1 + Math.random() * 2,
+      
+      updraftPhase: Math.random() * Math.PI * 2,
+      updraftSensitivity: 0.5 + Math.random() * 0.5,
+      
+      airLayerOffset: Math.random() * 1000,
       
       opacity: 0,
-      maxOpacity: 0.7 + 0.3 * depthLayer,
+      maxOpacity: 0.75 + 0.25 * depthLayer,
       
       age: 0,
-      fadeInDuration: 0.5,
+      fadeInDuration: 1.0,
       alive: true
     };
     
@@ -232,56 +251,104 @@ class SakuraPetal {
   updateWind(deltaTime) {
     if (!this.config.windEnabled) return;
     
-    const targetWindX = Math.sin(Date.now() / 8000) * this.config.windStrength * 30;
-    this.wind.x += (targetWindX - this.wind.x) * deltaTime * 0.5;
+    const targetWindX = Math.sin(this.globalTime / 12000) * this.config.windStrength * 20;
+    this.wind.x += (targetWindX - this.wind.x) * deltaTime * 0.3;
     
     if (Math.random() < deltaTime / (this.config.windGustInterval / 1000)) {
-      this.wind.gust = (Math.random() - 0.3) * 50 * this.config.windStrength;
+      this.wind.gust = (Math.random() - 0.3) * 25 * this.config.windStrength;
     }
-    this.wind.gust *= 0.95;
+    this.wind.gust *= 0.98;
+  }
+  
+  /**
+   * Calculate air current at specific height
+   */
+  getAirCurrentAtHeight(y, time, offset) {
+    const containerHeight = this.container.offsetHeight;
+    const normalizedY = y / containerHeight;
+    
+    const layer1 = Math.sin((time + offset) / 3000 + normalizedY * 2) * 8;
+    const layer2 = Math.sin((time + offset) / 5000 - normalizedY * 3) * 5;
+    const layer3 = Math.cos((time + offset) / 7000 + normalizedY) * 3;
+    
+    return layer1 + layer2 + layer3;
   }
   
   /**
    * Update single petal physics
    */
   updatePetal(petal, deltaTime) {
+    const cfg = this.config;
     petal.age += deltaTime;
     
+    // Gentle fade in
     if (petal.age < petal.fadeInDuration) {
       petal.opacity = (petal.age / petal.fadeInDuration) * petal.maxOpacity;
     }
     
-    const sway = Math.sin(petal.swayPhase + petal.age * petal.swayFrequency * Math.PI * 2) 
-                 * petal.swayAmplitude * deltaTime;
+    // 🌸 Multi-wave sway
+    const sway1 = Math.sin(petal.swayPhase1 + petal.age * petal.swayFrequency1 * Math.PI * 2) 
+                  * petal.swayAmplitude * 0.7;
+    const sway2 = Math.sin(petal.swayPhase2 + petal.age * petal.swayFrequency2 * Math.PI * 2) 
+                  * petal.swayAmplitude * 0.3;
+    const totalSway = (sway1 + sway2) * deltaTime;
     
+    // 🌸 Gentle flutter
     const flutter = Math.sin(petal.flutterPhase + petal.age * petal.flutterSpeed * Math.PI * 2) 
-                    * 5 * deltaTime;
+                    * 2 * deltaTime;
     
-    petal.vx += (this.wind.x + this.wind.gust) * deltaTime * (0.5 + 0.5 * petal.depthLayer);
-    petal.vx *= 0.99;
+    // 🌸 Air current effect
+    const airCurrent = this.getAirCurrentAtHeight(petal.y, this.globalTime, petal.airLayerOffset);
     
-    petal.x += petal.vx * deltaTime + sway + flutter;
+    // 🌸 Updraft
+    let updraft = 0;
+    if (Math.random() < cfg.updraftFrequency * deltaTime) {
+      updraft = -cfg.updraftStrength * petal.baseFallSpeed * petal.updraftSensitivity 
+                * (0.5 + Math.random() * 0.5);
+    }
+    const gentleUplift = Math.sin(petal.updraftPhase + petal.age * 0.5) * 3 * petal.updraftSensitivity;
+    
+    // Apply forces
+    petal.vx += (this.wind.x + this.wind.gust + airCurrent) * deltaTime * (0.3 + 0.4 * petal.depthLayer);
+    petal.vx *= cfg.airResistance;
+    
+    petal.vy += updraft * deltaTime;
+    petal.vy += gentleUplift * deltaTime;
+    
+    if (petal.vy < petal.baseFallSpeed * 0.3) {
+      petal.vy += (petal.baseFallSpeed * 0.5 - petal.vy) * deltaTime * 0.5;
+    }
+    if (petal.vy > petal.baseFallSpeed * 1.5) {
+      petal.vy = petal.baseFallSpeed * 1.5;
+    }
+    
+    petal.vy *= cfg.airResistance;
+    
+    petal.x += petal.vx * deltaTime + totalSway + flutter;
     petal.y += petal.vy * deltaTime;
     
-    const tumbleFactor = 1 + Math.sin(petal.age * 2) * 0.3;
-    petal.rotateX += petal.rotateXSpeed * deltaTime * tumbleFactor;
-    petal.rotateY += petal.rotateYSpeed * deltaTime * tumbleFactor;
-    petal.rotateZ += petal.rotateZSpeed * deltaTime;
+    // 🌸 Gentle 3D rotation
+    const rotationVariation = 1 + Math.sin(petal.age * 0.8) * 0.2;
+    petal.rotateX += petal.rotateXSpeed * deltaTime * rotationVariation;
+    petal.rotateY += petal.rotateYSpeed * deltaTime * rotationVariation;
+    petal.rotateZ += petal.rotateZSpeed * deltaTime * rotationVariation * 0.7;
     
+    // Check bounds
     const containerHeight = this.container.offsetHeight;
     const containerWidth = this.container.offsetWidth;
     
     if (petal.y > containerHeight + petal.size || 
-        petal.x < -petal.size * 2 || 
-        petal.x > containerWidth + petal.size * 2) {
+        petal.x < -petal.size * 3 || 
+        petal.x > containerWidth + petal.size * 3) {
       petal.alive = false;
       return;
     }
     
-    const fadeOutStart = containerHeight * 0.8;
+    // Gentle fade out
+    const fadeOutStart = containerHeight * 0.75;
     if (petal.y > fadeOutStart) {
       const fadeProgress = (petal.y - fadeOutStart) / (containerHeight - fadeOutStart);
-      petal.opacity = petal.maxOpacity * (1 - fadeProgress);
+      petal.opacity = petal.maxOpacity * (1 - fadeProgress * fadeProgress);
     }
     
     petal.element.style.transform = `
@@ -301,6 +368,7 @@ class SakuraPetal {
     
     const deltaTime = Math.min((currentTime - this.lastTime) / 1000, 0.1);
     this.lastTime = currentTime;
+    this.globalTime = currentTime;
     
     this.updateWind(deltaTime);
     
@@ -361,9 +429,8 @@ class SakuraPetal {
   }
   
   triggerGust(strength = 1) {
-    this.wind.gust = (Math.random() > 0.5 ? 1 : -1) * 60 * strength;
+    this.wind.gust = (Math.random() > 0.5 ? 1 : -1) * 30 * strength;
   }
 }
 
-// Global reference for theme toggle integration
 window.SakuraPetal = SakuraPetal;
